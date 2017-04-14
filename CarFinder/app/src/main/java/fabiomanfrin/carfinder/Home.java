@@ -1,10 +1,9 @@
 package fabiomanfrin.carfinder;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,7 +12,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,17 +21,16 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private SupportMapFragment sMapFragment;
-    private GoogleMap mMap;
+
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fm=getFragmentManager();
 
-        sMapFragment=SupportMapFragment.newInstance();
 
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,9 +53,10 @@ public class Home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        sMapFragment.getMapAsync(this);
-        FragmentManager fm=getSupportFragmentManager();
-        fm.beginTransaction().add(R.id.map,sMapFragment).commit();
+
+
+        Home_fragment home=new Home_fragment();
+        fm.beginTransaction().add(R.id.fragment_home,home).commit();
 
     }
 
@@ -82,7 +80,8 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.home_menu) {
-            // Handle the camera action
+            Home_fragment home=new Home_fragment();
+            fm.beginTransaction().replace(R.id.fragment_home,home).commit();
         }  else if (id == R.id.editCarPark_menu) {
 
         } else if (id == R.id.map_full) {
@@ -100,13 +99,4 @@ public class Home extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car_marker)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
 }
