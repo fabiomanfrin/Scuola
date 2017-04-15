@@ -78,15 +78,14 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        changeFragment(id);
 
         if (id == R.id.home_menu) {
-            Home_fragment home=new Home_fragment();
-            fm.beginTransaction().replace(R.id.fragment_home,home).commit();
+
         }  else if (id == R.id.editCarPark_menu) {
 
         } else if (id == R.id.map_full) {
-            Intent map_full=new Intent(Home.this,MapsActivity.class);
-            startActivity(map_full);
+
 
         }else if (id == R.id.settings_menu) {
 
@@ -97,6 +96,26 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void changeFragment(int id){
+        switch (id){
+            case R.id.home_menu:
+                /*Home_fragment home=new Home_fragment();
+                fm.beginTransaction().replace(R.id.fragment_home,home).commit();*/
+                break;
+            case R.id.editCarPark_menu:
+                break;
+            case R.id.map_full:
+                Intent map_full=new Intent(Home.this,MapsActivity.class);
+                startActivity(map_full);
+                break;
+            case R.id.settings_menu:
+                break;
+            case R.id.info_menu:
+                break;
+
+        }
     }
 
 }

@@ -37,33 +37,39 @@ public class Home_fragment extends Fragment implements OnMapReadyCallback{
         // Inflate the layout for this fragmen
         return inflater.inflate(R.layout.fragment_home_fragment, container, false);
 
-       // MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        //initMap();
+
+    }
+
+    private void initMap() {
+        // MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         sMapFragment=sMapFragment.newInstance();
         sMapFragment.getMapAsync(this);
-        getChildFragmentManager().beginTransaction().add(R.id.map,sMapFragment).commit();
+        //getChildFragmentManager().beginTransaction().add(R.id.map,sMapFragment).commit();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        //checkSupportMapFragment();
+
         android.app.FragmentManager fm= getChildFragmentManager();
         //sMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
-        if (sMapFragment == null) {
-            sMapFragment = SupportMapFragment.newInstance();
-            fm.beginTransaction().replace(R.id.map,(Fragment) sMapFragment).commit();
-        }
+
 
 
 /***at this time google play services are not initialize so get map and add what ever you want to it in onResume() or onStart() **/
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (map == null) {
-            map = fragment.getMap();
-            map.addMarker(new MarkerOptions().position(new LatLng(0, 0)));
+    private boolean checkSupportMapFragment() {
+        boolean r=false;
+        if (sMapFragment == null) {
+            sMapFragment = SupportMapFragment.newInstance();
+           // fm.beginTransaction().replace(R.id.map,(Fragment) sMapFragment).commit();
+            r=true;
         }
+        return r;
     }
 
     @Override
