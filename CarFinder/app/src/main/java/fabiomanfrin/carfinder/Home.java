@@ -13,14 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -54,9 +46,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
-        Home_fragment home=new Home_fragment();
-        fm.beginTransaction().add(R.id.fragment_home,home).commit();
+        fm.beginTransaction().add(R.id.fragment_home,new HomeFragment()).commit();
 
     }
 
@@ -101,8 +91,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private void changeFragment(int id){
         switch (id){
             case R.id.home_menu:
-                /*Home_fragment home=new Home_fragment();
-                fm.beginTransaction().replace(R.id.fragment_home,home).commit();*/
+                fm.beginTransaction().replace(R.id.fragment_home,new HomeFragment()).commit();
                 break;
             case R.id.editCarPark_menu:
                 break;

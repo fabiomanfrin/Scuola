@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fabiomanfrin.carfinder.Home_fragment">
+    tools:context="fabiomanfrin.carfinder.HomeFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
