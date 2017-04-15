@@ -21,7 +21,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fm=getFragmentManager();
+
 
 
         setContentView(R.layout.activity_home);
@@ -46,7 +46,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        fm.beginTransaction().add(R.id.fragment_home,new HomeFragment()).commit();
+        fm=getFragmentManager();
+        fm.beginTransaction().add(R.id.fragment,new HomeFragment()).commit();
 
     }
 
@@ -91,7 +92,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private void changeFragment(int id){
         switch (id){
             case R.id.home_menu:
-                fm.beginTransaction().replace(R.id.fragment_home,new HomeFragment()).commit();
+                fm.beginTransaction().replace(R.id.fragment,new HomeFragment()).commit();
                 break;
             case R.id.editCarPark_menu:
                 break;
