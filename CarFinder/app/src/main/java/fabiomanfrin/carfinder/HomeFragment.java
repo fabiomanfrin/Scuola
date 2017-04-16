@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         locationText=(TextView)getActivity().findViewById(R.id.locationText);
         locationText.setText(getLocation().toString());
 
-        Thread t = new Thread() {
+     /*   Thread t = new Thread() {
 
             @Override
             public void run() {
@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         };
 
-        t.start();
+        t.start();*/
 
     }
 
