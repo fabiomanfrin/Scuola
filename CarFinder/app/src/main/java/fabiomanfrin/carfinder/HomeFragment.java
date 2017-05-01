@@ -114,6 +114,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
+
+
         LatLng you = getLocation();
 
         mMap.addMarker(new MarkerOptions().position(you).title("You are here").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car_marker)));
@@ -122,8 +124,44 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.addPolyline(new PolylineOptions().add(you, new LatLng(45, 12))
                 .width(5)
-                .color(Color.BLUE)
+               .color(Color.BLUE)
         );
+
+
+
+        /*    String Url = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key=AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
+        HttpURLConnection conn = null;
+        JSONObject object=null;
+        StringBuilder jsonResults = new StringBuilder();
+        try {
+            URL url = new URL(Url);
+            conn = (HttpURLConnection) url.openConnection();
+            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+            // Load the results into a StringBuilder
+            int read;
+            char[] buff = new char[1024];
+            while ((read = in.read(buff)) != -1) {
+                jsonResults.append(buff, 0, read);
+            }
+            if (conn != null) {
+                conn.disconnect();
+            }
+
+            object = new JSONObject(jsonResults.toString());
+        }
+        catch(MalformedURLException e){
+
+        }
+        catch(IOException e){
+
+        }
+        catch(JSONException e){
+
+        }
+
+        System.out.println(object);*/
+
+
 
 
     }
@@ -135,13 +173,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String bestProvider = locationManager.getBestProvider(criteria, false);
-        Double lat,lon;
+        Double lat,lng;
         try {
             Location location = locationManager.getLastKnownLocation(bestProvider);
             locationManager.requestLocationUpdates(bestProvider, minTime, minDistance, myLocListener);
             lat = location.getLatitude ();
-            lon = location.getLongitude ();
-            return new LatLng(lat, lon);
+            lng = location.getLongitude ();
+            return new LatLng(lat, lng);
         }
         catch (NullPointerException e){
             e.printStackTrace();
