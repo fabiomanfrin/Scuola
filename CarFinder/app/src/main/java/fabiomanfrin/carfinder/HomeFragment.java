@@ -24,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -35,9 +36,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime=1*60*1000;
-    private float minDistance=500;
+    private long minTime=(1*60*1000)/2; //30 seconds
+    private float minDistance=500;   //500 meters
     private TextView locationText;
+    private Location location;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -58,10 +60,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initMap();
 
+        initMap();
         locationText=(TextView)getActivity().findViewById(R.id.locationText);
-        locationText.setText(getLocation().toString());
+        loc();
+
 
      /*   Thread t = new Thread() {
 
@@ -114,10 +117,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
-
-
-        LatLng you = getLocation();
-
+        if (location!=null){
+        LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
         mMap.addMarker(new MarkerOptions().position(you).title("You are here").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car_marker)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
@@ -126,6 +127,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 .width(5)
                .color(Color.BLUE)
         );
+        }
 
 
 
@@ -166,7 +168,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    public LatLng getLocation()
+   /* public LatLng getLocation()
     {
         // Get the location manager
         myLocationListener myLocListener = new myLocationListener();
@@ -190,6 +192,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             return null;
         }
 
+    }*/
+
+    public void loc(){
+        myLocationListener myLocListener = new myLocationListener(locationText);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String bestProvider = locationManager.getBestProvider(criteria, false);
+
+        try {
+            location = locationManager.getLastKnownLocation(bestProvider);
+            locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
+
+
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+
+        }
+        catch(SecurityException sEx){
+            sEx.printStackTrace();
+
+        }
     }
+
+
+
 
 }
