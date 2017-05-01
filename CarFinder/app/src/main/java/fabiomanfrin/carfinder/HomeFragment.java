@@ -3,6 +3,7 @@ package fabiomanfrin.carfinder;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 
 /**
@@ -117,6 +119,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(you).title("You are here").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car_marker)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+        mMap.addPolyline(new PolylineOptions().add(you, new LatLng(45, 12))
+                .width(5)
+                .color(Color.BLUE)
+        );
+
 
     }
 
