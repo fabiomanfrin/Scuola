@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -18,7 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class myLocationListener implements LocationListener {
 
     private TextView t; //testo per veder le coordinate solo provvisorio
-
+    private String TAG="LocationListener";
     public myLocationListener(TextView t){
         this.t=t;
 
@@ -34,6 +35,7 @@ public class myLocationListener implements LocationListener {
             //methodThatDoesSomethingWithNewLocation(location);
             LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
             t.setText(currentLocation.toString());
+            Log.d(TAG, "onLocationChanged: "+currentLocation.toString());
 
         }
     }

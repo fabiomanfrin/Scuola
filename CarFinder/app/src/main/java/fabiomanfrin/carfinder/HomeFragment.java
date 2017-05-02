@@ -1,8 +1,10 @@
 package fabiomanfrin.carfinder;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -10,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -36,10 +39,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime=(1*60*1000)/2; //30 seconds
-    private float minDistance=500;   //500 meters
+    private long minTime = (1 * 60 * 1000) / 4; //15 seconds
+    private float minDistance = 500;   //500 meters
     private TextView locationText;
     private Location location;
+    private LocationManager locationManager;
+    private String bestProvider;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -54,7 +59,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         return inflater.inflate(R.layout.fragment_home_fragment, container, false);
 
 
-
     }
 
     @Override
@@ -62,10 +66,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
 
         initMap();
-        locationText=(TextView)getActivity().findViewById(R.id.locationText);
+        locationText = (TextView) getActivity().findViewById(R.id.locationText);
         loc();
 
-
+        if(location!=null) {
+            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            locationText.setText(currentLocation.toString());
+        }
+        else{
+            locationText.setText("Location not found");
+        }
      /*   Thread t = new Thread() {
 
             @Override
@@ -119,7 +129,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         //LatLng sydney = new LatLng(-34, 151);
         if (location!=null){
         LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(you).title("You are here").icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_car_marker)));
+        mMap.addMarker(new MarkerOptions().position(you).title("You are here").icon(BitmapDescriptorFactory.fromResource(R.drawable.car_marker80x80)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
@@ -196,9 +206,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public void loc(){
         myLocationListener myLocListener = new myLocationListener(locationText);
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        String bestProvider = locationManager.getBestProvider(criteria, false);
+        bestProvider = locationManager.getBestProvider(criteria, false);
 
         try {
             location = locationManager.getLastKnownLocation(bestProvider);
