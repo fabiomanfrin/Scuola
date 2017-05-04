@@ -1,10 +1,8 @@
 package fabiomanfrin.carfinder;
 
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -12,9 +10,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +21,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -76,26 +71,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         else{
             locationText.setText("Location not found");
         }
-     /*   Thread t = new Thread() {
-
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.addParking_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(1000);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // update TextView here!
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
+            public void onClick(View view) {
+                // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Bundle b=new Bundle();
+                if(location==null) {
+                    b.putDouble("lat", 0);
+                    b.putDouble("lat", 0);
+                }else{
+                    b.putDouble("lat", location.getLatitude());
+                    b.putDouble("lng", location.getLongitude());
                 }
-            }
-        };
+                addParkingFragment ap=new addParkingFragment();
+                ap.setArguments(b);
+                ((Home)getActivity()).replacefragment(1,ap);  // replace fragment in fragment layout with a addParking Fragment
 
-        t.start();*/
+            }
+        });
 
     }
 

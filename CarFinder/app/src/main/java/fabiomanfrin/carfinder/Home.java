@@ -2,21 +2,15 @@ package fabiomanfrin.carfinder;
 
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
-import com.google.android.gms.maps.model.LatLng;
 
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,13 +27,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addCarPark_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -53,6 +41,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         fm=getFragmentManager();
         fm.beginTransaction().add(R.id.fragment,new HomeFragment()).commit();
+
 
     }
 
@@ -97,7 +86,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private void changeFragment(int id){
         switch (id){
             case R.id.home_menu:
-                fm.beginTransaction().replace(R.id.fragment,new HomeFragment()).commit();
+                replacefragment(2,new HomeFragment());
                 break;
             case R.id.editCarPark_menu:
                 break;
@@ -111,6 +100,18 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 break;
 
         }
+    }
+
+    public void replacefragment(int id,android.app.Fragment f){
+        switch (id) {
+            case 1: // addParkingFragment
+                fm.beginTransaction().replace(R.id.fragment,f).commit();
+                break;
+            case 2: // HomeFragment
+                fm.beginTransaction().replace(R.id.fragment,f).commit();
+                break;
+        }
+
     }
 
 
