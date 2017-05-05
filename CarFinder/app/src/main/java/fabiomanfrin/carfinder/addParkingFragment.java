@@ -53,14 +53,14 @@ public class addParkingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
-                ((Home)getActivity()).replacefragment(2,new HomeFragment());
+                ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "cancel", Toast.LENGTH_SHORT).show();
-                ((Home)getActivity()).replacefragment(2,new HomeFragment());
+                ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });
 

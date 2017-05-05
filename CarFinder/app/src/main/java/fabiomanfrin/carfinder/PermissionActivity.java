@@ -17,9 +17,10 @@ public class PermissionActivity extends Activity {
 
         getPermission();
 
-        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+        if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED){
             Intent i =new Intent(PermissionActivity.this,Home.class);
             startActivity(i);
+            this.finish();
         }
     }
 
@@ -33,21 +34,21 @@ public class PermissionActivity extends Activity {
         // in Marshmallow
         // 2) Always check for permission (even if permission has already been granted)
         // since the user can revoke permissions at any time through Settings
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // The permission is NOT already granted.
             // Check if the user has been asked about this permission already and denied
             // it. If so, we want to give more explanation about why the permission is needed.
             if (shouldShowRequestPermissionRationale(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 // Show our own UI to explain to the user why we need to read the contacts
                 // before actually requesting the permission and showing the default UI
             }
 
             // Fire off an async request to actually get the permission
             // This will show the standard permission request dialog UI
-            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     PERMISSIONS_REQUEST);
         }
 
@@ -65,6 +66,7 @@ public class PermissionActivity extends Activity {
                 Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
                 Intent i =new Intent(PermissionActivity.this,Home.class);
                 startActivity(i);
+                this.finish();
             } else {
                 Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show();
             }

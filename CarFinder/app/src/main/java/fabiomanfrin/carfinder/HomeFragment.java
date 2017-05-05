@@ -1,8 +1,10 @@
 package fabiomanfrin.carfinder;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -11,10 +13,13 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -62,13 +67,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         initMap();
         locationText = (TextView) getActivity().findViewById(R.id.locationText);
+        Button b = (Button) getActivity().findViewById(R.id.refresh_button);
         loc();
 
-        if(location!=null) {
+        if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             locationText.setText(currentLocation.toString());
-        }
-        else{
+        } else {
             locationText.setText("Location not found");
         }
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.addParking_fab);
@@ -76,18 +81,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                Bundle b=new Bundle();
-                if(location==null) {
+                Bundle b = new Bundle();
+                if (location == null) {
                     b.putDouble("lat", 0);
                     b.putDouble("lat", 0);
-                }else{
+                } else {
                     b.putDouble("lat", location.getLatitude());
                     b.putDouble("lng", location.getLongitude());
                 }
-                addParkingFragment ap=new addParkingFragment();
+                addParkingFragment ap = new addParkingFragment();
                 ap.setArguments(b);
-                ((Home)getActivity()).replacefragment(1,ap);  // replace fragment in fragment layout with a addParking Fragment
+                ((Home) getActivity()).replacefragment(ap);  // replace fragment in fragment layout with a addParking Fragment
 
+            }
+        });
+
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+
+                location = locationManager.getLastKnownLocation(bestProvider);
+                locationText.setText(new LatLng(location.getLatitude(),location.getLongitude()).toString());
+                Log.d("refresh", new LatLng(location.getLatitude(),location.getLongitude()).toString());
             }
         });
 
