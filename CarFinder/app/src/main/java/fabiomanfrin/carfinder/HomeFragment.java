@@ -183,6 +183,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
 
+            //mMap.addPolyline(downloadTask.getParserTask().getPolylineOptions());
         }
     }
 
@@ -223,7 +224,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             br.close();
 
         } catch (Exception e) {
-            Log.d("downloadEX", e.toString());
+            Log.d(TAG, e.toString());
         } finally {
             iStream.close();
             urlConnection.disconnect();
@@ -232,7 +233,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     // Fetches data from url passed
-    private class DownloadTask extends AsyncTask<String, Void, String> {
+    private class DownloadTaskk extends AsyncTask<String, Void, String> {
 
         // Downloading data in non-ui thread
         @Override
@@ -245,7 +246,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 // Fetching the data from web service
                 data = downloadUrl(url[0]);
             } catch (Exception e) {
-                Log.d("Background Task", e.toString());
+                Log.d(TAG, e.toString());
             }
             return data;
         }
@@ -266,7 +267,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     /**
      * A class to parse the Google Places in JSON format
      */
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+    private class ParserTaskk extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
         // Parsing the data in non-ui thread
         @Override
@@ -316,6 +317,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         continue;
                     }
 
+
+
                     double lat = Double.parseDouble(point.get("lat"));
                     double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
@@ -333,6 +336,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
+            //locationText.append("Distance:" + distance + ", Duration:" + duration);
         }
     }
 
@@ -378,43 +382,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         urlString.append(",");
         urlString.append(Double.toString(destlog));
         urlString.append("&sensor=false&mode=driving&alternatives=true");
-        urlString.append("&key=AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g");
+        String apiKey="AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
+        urlString.append("&key="+apiKey);
         return urlString.toString();
     }
 
-
-    private List<LatLng> decodePoly(String encoded) {
-
-        List<LatLng> poly = new ArrayList<LatLng>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            LatLng p = new LatLng((((double) lat / 1E5)),
-                    (((double) lng / 1E5)));
-            poly.add(p);
-        }
-
-        return poly;
+    public GoogleMap getMap(){
+        return mMap;
     }
 
 
