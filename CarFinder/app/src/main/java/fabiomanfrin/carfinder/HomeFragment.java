@@ -137,7 +137,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             .position(new LatLng(location.getLatitude(),location.getLongitude()))
                             .title("You")
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
+                    map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
+                    map.moveCamera(CameraUpdateFactory.zoomTo(15));
 
                 }
             }
@@ -187,25 +188,43 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
     public void getLocation(){
-        myLocationListener myLocListener = new myLocationListener(locationText,HomeFragment.this);
+        final myLocationListener myLocListener = new myLocationListener(locationText,HomeFragment.this);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         //check if the gps is enabled
 
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
-            builder.setMessage("GPS down, do you want to enable it")
+            builder.setMessage("GPS down, do you want to enable it?")
                     .setCancelable(false)
                     .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            Criteria criteria = new Criteria();
+                            bestProvider = locationManager.getBestProvider(criteria, false);
+
+                            try {
+                                location = locationManager.getLastKnownLocation(bestProvider);
+                                locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
+
+
+                            }
+                            catch (NullPointerException e){
+                                e.printStackTrace();
+
+                            }
+                            catch(SecurityException sEx){
+                                sEx.printStackTrace();
+
+                            }
                         }
                     })
                     .setNegativeButton("no", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
+                            getActivity().finish();
                         }
                     });
             AlertDialog alert=builder.create();
@@ -214,23 +233,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-        Criteria criteria = new Criteria();
-        bestProvider = locationManager.getBestProvider(criteria, false);
 
-        try {
-            location = locationManager.getLastKnownLocation(bestProvider);
-            locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
-
-
-        }
-        catch (NullPointerException e){
-            e.printStackTrace();
-
-        }
-        catch(SecurityException sEx){
-            sEx.printStackTrace();
-
-        }
     }
 
 
