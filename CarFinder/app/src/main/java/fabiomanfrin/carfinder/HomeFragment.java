@@ -2,8 +2,10 @@ package fabiomanfrin.carfinder;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -13,6 +15,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -186,6 +189,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void getLocation(){
         myLocationListener myLocListener = new myLocationListener(locationText,HomeFragment.this);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        //check if the gps is enabled
+
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
+            builder.setMessage("GPS down, do you want to enable it")
+                    .setCancelable(false)
+                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert=builder.create();
+            alert.show();
+        }
+
+
+
         Criteria criteria = new Criteria();
         bestProvider = locationManager.getBestProvider(criteria, false);
 
