@@ -1,8 +1,14 @@
 package fabiomanfrin.carfinder;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -18,6 +24,15 @@ import java.util.List;
  */
 public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
+    Fragment f;
+    HomeFragment hf;
+    GoogleMap map;
+    public ParserTask(Fragment f){
+        this.f=f;
+        hf=(HomeFragment)f;
+        map=hf.getMap();
+
+    }
 
     // Parsing the data in non-ui thread
     @Override
@@ -78,13 +93,37 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
-            lineOptions.width(2);
-            lineOptions.color(Color.RED);
+            lineOptions.width(10);
+            lineOptions.color(Color.CYAN);
         }
+
 
 
         // Drawing polyline in the Google Map for the i-th route
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
+
+        map.addPolyline(lineOptions);
+        map.addMarker(new MarkerOptions()
+                .position(points.get(points.size()-1))
+                .title("Destination")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+        TextView t=(TextView) hf.getActivity().findViewById(R.id.locationText);
+        t.append("distance:"+distance);
+
+        /* show every point on the map
+
+
+        for (int i=0;i<points.size();i++){
+            map.addMarker(new MarkerOptions()
+                    .position(points.get(i))
+                    .title("Marker "+i));
+        }
+        */
+
+
+
+
     }
 
 

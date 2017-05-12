@@ -16,7 +16,7 @@
             android:layout_width="111dp"
             android:layout_height="74dp"
             android:layout_marginTop="34dp"
-            android:text="REFRESH LOCATION"
+            android:text="ADD POLYLINE"
             android:textAppearance="@android:style/TextAppearance.Material.Medium"
             app:layout_constraintHorizontal_bias="0.683"
             app:layout_constraintLeft_toLeftOf="parent"

@@ -1,5 +1,6 @@
 package fabiomanfrin.carfinder;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -19,15 +21,21 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class myLocationListener implements LocationListener {
 
     private TextView t; //testo per veder le coordinate solo provvisorio
-    private String TAG="LocationListener";
-    public myLocationListener(TextView t){
+    private String TAG="myTAG";
+    private Fragment f;
+    private HomeFragment hf;
+    public myLocationListener(TextView t, Fragment f){
         this.t=t;
+        this.f=f;
+        hf=(HomeFragment)f;
 
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
+        GoogleMap map=hf.getMap();
+
         if (location != null)
         {
 
@@ -36,6 +44,23 @@ public class myLocationListener implements LocationListener {
             LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
             t.setText(currentLocation.toString());
             Log.d(TAG, "onLocationChanged: "+currentLocation.toString());
+
+
+
+            if(map!=null){
+                //qui ogni volta che richiede la posizione ricarica la strada sulla mappa
+                //da implementare
+                String url=hf.makeURL(location.getLatitude(), location.getLongitude(), 45.4871763, 12.291384);
+                map.clear();
+
+                DownloadTask downloadTask = new DownloadTask(hf);
+                // Start downloading json data from Google Directions API
+                downloadTask.execute(url);
+                map.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(),location.getLongitude()))
+                        .title("You")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            }
 
         }
     }

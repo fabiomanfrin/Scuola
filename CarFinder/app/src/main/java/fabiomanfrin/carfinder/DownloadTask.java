@@ -27,6 +27,11 @@ import java.util.List;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
+    Fragment f;
+    public DownloadTask(Fragment f){
+        this.f=f;
+    }
+
     // Downloading data in non-ui thread
     @Override
     protected String doInBackground(String... url) {
@@ -49,7 +54,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
 
-        ParserTask parserTask = new ParserTask();
+        ParserTask parserTask = new ParserTask(f);
 
         // Invokes the thread for parsing the JSON data
         parserTask.execute(result);
@@ -95,6 +100,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
         }
         return data;
     }
+
 
 
 }
