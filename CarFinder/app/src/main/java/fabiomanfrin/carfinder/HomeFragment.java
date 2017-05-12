@@ -229,6 +229,26 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     });
             AlertDialog alert=builder.create();
             alert.show();
+        }else{
+
+            Criteria criteria = new Criteria();
+            bestProvider = locationManager.getBestProvider(criteria, false);
+
+            try {
+                location = locationManager.getLastKnownLocation(bestProvider);
+                locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
+
+
+            }
+            catch (NullPointerException e){
+                e.printStackTrace();
+
+            }
+            catch(SecurityException sEx){
+                sEx.printStackTrace();
+
+            }
+
         }
 
 
