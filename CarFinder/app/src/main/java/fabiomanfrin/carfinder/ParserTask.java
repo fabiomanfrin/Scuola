@@ -108,8 +108,6 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
                 .title("Destination")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-        TextView t=(TextView) hf.getActivity().findViewById(R.id.locationText);
-        t.append("distance:"+distance);
 
         /* show every point on the map
 

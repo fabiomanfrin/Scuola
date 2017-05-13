@@ -56,10 +56,7 @@ public class myLocationListener implements LocationListener {
                 DownloadTask downloadTask = new DownloadTask(hf);
                 // Start downloading json data from Google Directions API
                 downloadTask.execute(url);
-                map.addMarker(new MarkerOptions()
-                        .position(new LatLng(location.getLatitude(),location.getLongitude()))
-                        .title("You")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
             }
 
         }

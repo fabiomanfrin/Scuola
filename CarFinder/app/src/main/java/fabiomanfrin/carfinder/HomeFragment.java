@@ -60,9 +60,9 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
-    String TAG="myTAG";
+    String TAG = "myTAG";
     private MapFragment mapFragment;
-    private GoogleMap map;
+    private GoogleMap mMap;
     private long minTime = 1 * 5 * 1000; //5 seconds
     private float minDistance = 500;   //500 meters
     private TextView locationText;
@@ -107,7 +107,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Bundle b = new Bundle();
                 if (location == null) {
-                    AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage("Unable to add a new car parking cause current location missing")
                             .setCancelable(false)
                             .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -116,7 +116,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                     dialog.cancel();
                                 }
                             });
-                    AlertDialog alert=builder.create();
+                    AlertDialog alert = builder.create();
                     alert.show();
 
 
@@ -134,30 +134,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (location !=null && map!=null){
+                if (location != null && mMap != null) {
                     String url = makeURL(location.getLatitude(), location.getLongitude(), 45.4871763, 12.291384);   //google json from current location to chiesa di campalto
                     Log.d(TAG, url);
 
 
-                    map.clear();
+                    mMap.clear();
 
                     DownloadTask downloadTask = new DownloadTask(HomeFragment.this);
                     // Start downloading json data from Google Directions API
                     downloadTask.execute(url);
-                    map.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.getLatitude(),location.getLongitude()))
-                            .title("You")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
-                    map.moveCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
                 }
             }
         });
+
+
     }
 
     public void initMap() {
-        if (map == null) {
+        if (mMap == null) {
             mapFragment=(MapFragment) getChildFragmentManager().findFragmentById(R.id.mini_map);
             mapFragment.getMapAsync(this);
         }
@@ -180,20 +178,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        map = googleMap;
+        mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
         if (location!=null){
             LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
-            map.addMarker(new MarkerOptions()
+            /*mMap.addMarker(new MarkerOptions()
                     .position(you)
                     .title("You are here")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            map.moveCamera(CameraUpdateFactory.newLatLng(you));
-            map.moveCamera(CameraUpdateFactory.zoomTo(15));
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
         }
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
 
@@ -289,7 +299,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public GoogleMap getMap(){
-        return map;
+        return mMap;
     }
 
 
