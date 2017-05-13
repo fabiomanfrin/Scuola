@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     String TAG="myTAG";
     private MapFragment mapFragment;
     private GoogleMap map;
-    private long minTime = (1 * 60 * 1000) / 4; //15 seconds
+    private long minTime = 1 * 5 * 1000; //5 seconds
     private float minDistance = 500;   //500 meters
     private TextView locationText;
     private Location location;
@@ -107,8 +107,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Bundle b = new Bundle();
                 if (location == null) {
-                    b.putDouble("lat", 0);
-                    b.putDouble("lat", 0);
+                    AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
+                    builder.setMessage("Unable to add a new car parking cause current location missing")
+                            .setCancelable(false)
+                            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert=builder.create();
+                    alert.show();
+
+
                 } else {
                     b.putDouble("lat", location.getLatitude());
                     b.putDouble("lng", location.getLongitude());
