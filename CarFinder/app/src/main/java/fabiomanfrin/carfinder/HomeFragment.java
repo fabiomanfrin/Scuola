@@ -63,12 +63,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     String TAG = "myTAG";
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime = 1 * 5 * 1000; //5 seconds
-    private float minDistance = 500;   //500 meters
+    private long minTime =1 * 5 * 1000; //5 seconds
+    private float minDistance = 5;   //500 meters
     private TextView locationText;
     private Location location;
     private LocationManager locationManager;
     private String bestProvider;
+    private myLocationListener myLocListener;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -209,7 +210,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
     public void getLocation(){
-        final myLocationListener myLocListener = new myLocationListener(locationText,HomeFragment.this);
+        myLocListener = new myLocationListener(locationText,HomeFragment.this);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         //check if the gps is enabled
@@ -256,7 +257,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             bestProvider = locationManager.getBestProvider(criteria, false);
 
             try {
-                location = locationManager.getLastKnownLocation(bestProvider);
+                //location = locationManager.getLastKnownLocation(bestProvider);
                 locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
 
 
@@ -277,6 +278,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        locationManager.removeUpdates(myLocListener);
+    }
 
 
     public String makeURL (double sourcelat, double sourcelog, double destlat, double destlog ){
@@ -303,6 +309,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-
-
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 }

@@ -18,12 +18,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private FragmentManager fm;
     private boolean doubleBackToExitPressedOnce = false;
     private static final String TAG="myTAG";
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         setSupportActionBar(toolbar);
 
 
+        mAuth=FirebaseAuth.getInstance();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -140,7 +144,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        changeFragment(id);
+        changeOptionSideBar(id);
 
         if (id == R.id.home_menu) {
 
@@ -160,7 +164,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         return true;
     }
 
-    private void changeFragment(int id){
+    private void changeOptionSideBar(int id){
         switch (id){
             case R.id.home_menu:
                 replacefragment(new HomeFragment());
@@ -174,6 +178,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             case R.id.settings_menu:
                 break;
             case R.id.info_menu:
+                break;
+            case R.id.logout:
+                mAuth.signOut();
                 break;
 
         }

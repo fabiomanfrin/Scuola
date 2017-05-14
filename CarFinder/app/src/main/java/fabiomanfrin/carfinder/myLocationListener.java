@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -34,7 +36,7 @@ public class myLocationListener implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        GoogleMap map=hf.getMap();
+        GoogleMap mMap=hf.getMap();
 
         if (location != null)
         {
@@ -47,17 +49,22 @@ public class myLocationListener implements LocationListener {
 
 
 
-            if(map!=null){
+            if(mMap!=null){
                 //qui ogni volta che richiede la posizione ricarica la strada sulla mappa
                 //da implementare
                 String url=hf.makeURL(location.getLatitude(), location.getLongitude(), 45.4871763, 12.291384);
-                map.clear();
+                mMap.clear();
 
                 DownloadTask downloadTask = new DownloadTask(hf);
                 // Start downloading json data from Google Directions API
                 downloadTask.execute(url);
 
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
             }
+
+            hf.setLocation(location);
 
         }
     }
