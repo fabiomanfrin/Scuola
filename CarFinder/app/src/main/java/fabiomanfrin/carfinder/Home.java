@@ -1,15 +1,20 @@
 package fabiomanfrin.carfinder;
 
+import android.*;
+import android.Manifest;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -18,6 +23,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     private FragmentManager fm;
     private boolean doubleBackToExitPressedOnce = false;
+    private static final String TAG="myTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +47,65 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        fm=getFragmentManager();
-        fm.beginTransaction().add(R.id.fragment,new HomeFragment()).commit();
+        ////////////////////////////////
+        if(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "premission granted");
+            fm=getFragmentManager();
+            fm.beginTransaction().add(R.id.fragment,new HomeFragment()).commit();
+        }
+        else
+        {
+            getPermission();
+
+        }
+        ////////////////////////////////
+
+
+
 
 
     }
+
+    /////////////////////////////////////
+    private static final int PERMISSIONS_REQUEST = 1;
+
+    public void getPermission() {
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+            }
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST);
+        }
+
+
+    }
+
+    // Callback with the request from calling requestPermissions(...)
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[],
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                Log.d(TAG, "Permission granted");
+                fm=getFragmentManager();
+                fm.beginTransaction().add(R.id.fragment,new HomeFragment()).commit();
+            } else {
+                Log.d(TAG, "Permission denied");
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    ////////////////////////////////////
+
+
+
 
     @Override
     public void onBackPressed() {
