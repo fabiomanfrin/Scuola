@@ -59,8 +59,8 @@ public class myLocationListener implements LocationListener {
                 // Start downloading json data from Google Directions API
                 downloadTask.execute(url);
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+               /* mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));*/
 
             }
 

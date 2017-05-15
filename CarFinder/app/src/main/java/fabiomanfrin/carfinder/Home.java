@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +29,10 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private static final String TAG="myTAG";
     private FirebaseAuth mAuth;
 
+    private String email;
+    private String name;
+    private String userid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +44,25 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         setSupportActionBar(toolbar);
 
 
+
+
+        Bundle b=getIntent().getExtras();
+        email=b.getString("email");
+        name=b.getString("name");
+        userid=b.getString("userid");
+
+        Log.d(TAG, "onCreate: "+email+" "+userid+" "+name);
+
+
+
+
+
         mAuth=FirebaseAuth.getInstance();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -50,6 +71,16 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        // get view from header bar (not working)
+
+        TextView username_text=(TextView)navigationView.getHeaderView(R.id.username_text);
+        TextView email_text=(TextView)navigationView.getHeaderView(R.id.email_text);
+
+        username_text.setText(name);
+        email_text.setText(email);
+
+        
 
         ////////////////////////////////
         if(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
@@ -69,6 +100,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
 
     }
+
 
     /////////////////////////////////////
     private static final int PERMISSIONS_REQUEST = 1;
@@ -143,6 +175,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
         changeOptionSideBar(id);
 

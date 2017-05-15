@@ -257,7 +257,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             bestProvider = locationManager.getBestProvider(criteria, false);
 
             try {
-                //location = locationManager.getLastKnownLocation(bestProvider);
+                location = locationManager.getLastKnownLocation(bestProvider);
                 locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
 
 
