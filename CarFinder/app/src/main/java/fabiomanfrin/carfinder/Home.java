@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -16,10 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,10 +31,16 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private boolean doubleBackToExitPressedOnce = false;
     private static final String TAG="myTAG";
     private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private String email;
     private String name;
     private String userid;
+
+    private TextView username_text;
+    private TextView email_text;
+    private TextView login_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,25 +53,20 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         setSupportActionBar(toolbar);
 
 
-
-
-        Bundle b=getIntent().getExtras();
-        email=b.getString("email");
-        name=b.getString("name");
-        userid=b.getString("userid");
-
-        Log.d(TAG, "onCreate: "+email+" "+userid+" "+name);
-
-
-
-
-
+        //get authentication data
         mAuth=FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        if(currentUser!=null){
+            email=mAuth.getCurrentUser().getEmail();
+            name=mAuth.getCurrentUser().getDisplayName();
+            userid=mAuth.getCurrentUser().getUid();
+            Log.d(TAG, "onCreate: "+email+" "+userid+" "+name);
+        }
+
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -71,14 +75,16 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        // get view from header bar (not working)
-
-        TextView username_text=(TextView)navigationView.getHeaderView(R.id.username_text);
-        TextView email_text=(TextView)navigationView.getHeaderView(R.id.email_text);
-
+        // get view from header bar
+        View header=navigationView.getHeaderView(0);
+        username_text = (TextView)header.findViewById(R.id.username_text);
+        email_text = (TextView)header.findViewById(R.id.email_text);
+        login_text=(TextView)header.findViewById(R.id.login_text);
         username_text.setText(name);
         email_text.setText(email);
+
+
+
 
         
 
@@ -97,6 +103,22 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
 
 
+        mAuthListener=new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(FirebaseAuth.getInstance().getCurrentUser()==null){
+                    username_text.setText("");
+                    email_text.setText("");
+                    login_text.setText("Log In");
+                    login_text.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(Home.this,SignInActivity.class));
+                        }
+                    });
+                }
+            }
+        };
 
 
     }
@@ -168,6 +190,12 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+        Log.d(TAG, "onStart: sono dentro onstart");
+    }
 
 
 
@@ -178,20 +206,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         int id = item.getItemId();
         changeOptionSideBar(id);
-
-        if (id == R.id.home_menu) {
-
-        }  else if (id == R.id.editCarPark_menu) {
-
-        } else if (id == R.id.map_full) {
-
-
-        }else if (id == R.id.settings_menu) {
-
-        }else if (id == R.id.info_menu) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -214,6 +228,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 break;
             case R.id.logout:
                 mAuth.signOut();
+                Log.d(TAG, "changeOptionSideBar: signoutoption");
+
                 break;
 
         }

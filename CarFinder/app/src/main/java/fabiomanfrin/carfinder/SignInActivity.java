@@ -32,10 +32,6 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private String email;
-    private String userId;
-    private String FamilyName;
-    private String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,18 +43,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser()!=null){
 
-
-                    email=firebaseAuth.getCurrentUser().getEmail();
-                    userId=firebaseAuth.getCurrentUser().getUid();
-                    name=firebaseAuth.getCurrentUser().getDisplayName();
-                    Log.d(TAG, "AuthListener: "+name+" "+email+" "+userId);
-                    Bundle b=new Bundle();
-                    Intent i=new Intent(SignInActivity.this,Home.class);
-                    b.putString("email",email);
-                    b.putString("userid",userId);
-                    b.putString("name",name);
-                    i.putExtras(b);
-                    startActivity(i);
+                    startActivity(new Intent(SignInActivity.this,Home.class));
 
                 }
             }
@@ -93,10 +78,6 @@ public class SignInActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        /*FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            startActivity(new Intent(SignInActivity.this,Home.class));
-        }*/
     }
 
     private void signIn() {
@@ -115,7 +96,6 @@ public class SignInActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
 
-                Log.d(TAG, "onActivityResult: "+email+" "+FamilyName+" "+name+" "+userId);
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign In failed, update UI appropriately
