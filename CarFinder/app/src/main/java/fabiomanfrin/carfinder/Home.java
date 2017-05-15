@@ -66,6 +66,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
 
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -83,7 +84,15 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         username_text.setText(name);
         email_text.setText(email);
 
-
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            login_text.setText("Log In");
+            login_text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(Home.this,SignInActivity.class));
+                }
+            });
+        }
 
 
         
