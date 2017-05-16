@@ -37,6 +37,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,13 +68,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     String TAG = "myTAG";
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime =1 * 5 * 1000; //5 seconds
-    private float minDistance = 5;   //500 meters
+    private long minTime =1 * 30 * 1000; //30 seconds
+    private float minDistance = 0;   //0 meters
     private TextView locationText;
     private Location location;
     private LocationManager locationManager;
     private String bestProvider;
     private myLocationListener myLocListener;
+    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
+    private String userId;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -90,10 +98,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        initMap();
+        beginAuth();
         locationText = (TextView) getActivity().findViewById(R.id.locationText);
-        Button b = (Button) getActivity().findViewById(R.id.refresh_button);
         getLocation();
+        initMap();
+
+        Button b = (Button) getActivity().findViewById(R.id.refresh_button);
+
+
+
+
 
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -151,7 +165,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+    }
 
+    private void beginAuth() {
+
+        //g;tting current account data
+        mAuth=((Home)getActivity()).getAuth();
+        if(mAuth.getCurrentUser()!= null) {
+            userId = mAuth.getCurrentUser().getUid();
+            //getting databse from activity
+            mDatabase = ((Home) getActivity()).getDB();
+            // mDatabase.child("Parking").child(userId+"ciaoooooooooo").child("test").setValue("scritta222");
+
+            mDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String s = dataSnapshot.child("Parking").child(userId).child("test").getValue().toString();
+                    Log.d(TAG, "onDataChange: " + s);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
     }
 
@@ -180,28 +218,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        mMap.setMapType(mMap.MAP_TYPE_HYBRID);
 
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
         if (location!=null){
             LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
-            /*mMap.addMarker(new MarkerOptions()
-                    .position(you)
-                    .title("You are here")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
             mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-
         }
-
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mMap.setMyLocationEnabled(true);
@@ -210,7 +234,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
     public void getLocation(){
-        myLocListener = new myLocationListener(locationText,HomeFragment.this);
+        myLocListener = new myLocationListener(HomeFragment.this);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         //check if the gps is enabled
@@ -228,7 +252,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                             try {
                                 location = locationManager.getLastKnownLocation(bestProvider);
-                                locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
+                                locationManager.requestLocationUpdates(bestProvider, minTime, minDistance, myLocListener);
 
 
                             }
@@ -258,7 +282,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             try {
                 location = locationManager.getLastKnownLocation(bestProvider);
-                locationManager.requestLocationUpdates(bestProvider, minTime, 0, myLocListener);
+                locationManager.requestLocationUpdates(bestProvider, minTime, minDistance, myLocListener);
 
 
             }
@@ -278,11 +302,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        locationManager.removeUpdates(myLocListener);
-    }
 
 
     public String makeURL (double sourcelat, double sourcelog, double destlat, double destlog ){
@@ -298,7 +317,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 .append(Double.toString( destlat));
         urlString.append(",");
         urlString.append(Double.toString(destlog));
-        urlString.append("&sensor=false&mode=driving&alternatives=true");
+        urlString.append("&sensor=false&mode=walking&alternatives=true");
         String apiKey="AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
         urlString.append("&key="+apiKey);
         return urlString.toString();
@@ -307,8 +326,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public GoogleMap getMap(){
         return mMap;
     }
-
-
+    public TextView getLocationText(){return locationText;}
     public void setLocation(Location location) {
         this.location = location;
     }

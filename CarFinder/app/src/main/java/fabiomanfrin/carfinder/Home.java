@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -18,11 +19,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
 
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,14 +40,17 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference mDatabase;
 
     private String email;
     private String name;
     private String userid;
+    private Uri imageUri;
 
     private TextView username_text;
     private TextView email_text;
     private TextView login_text;
+    private ImageView iView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +70,11 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             email=mAuth.getCurrentUser().getEmail();
             name=mAuth.getCurrentUser().getDisplayName();
             userid=mAuth.getCurrentUser().getUid();
+            imageUri=mAuth.getCurrentUser().getPhotoUrl();
             Log.d(TAG, "onCreate: "+email+" "+userid+" "+name);
+            //get firebase database
+            mDatabase = FirebaseDatabase.getInstance().getReference();
         }
-
-
 
 
 
@@ -81,11 +92,18 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         username_text = (TextView)header.findViewById(R.id.username_text);
         email_text = (TextView)header.findViewById(R.id.email_text);
         login_text=(TextView)header.findViewById(R.id.login_text);
-        username_text.setText(name);
-        email_text.setText(email);
+        iView=(ImageView)header.findViewById(R.id.imageView);
+
+
+        if(currentUser!=null) {
+            //download image from google
+            Picasso.with(this).load(imageUri).into(iView);
+            username_text.setText(name);
+            email_text.setText(email);
+        }
 
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
-            login_text.setText("Log In");
+            login_text.setText("Do you want to sign in? do it NOW");
             login_text.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -116,9 +134,10 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(FirebaseAuth.getInstance().getCurrentUser()==null){
+                    iView.setImageAlpha(0);
                     username_text.setText("");
                     email_text.setText("");
-                    login_text.setText("Log In");
+                    login_text.setText("Do you want to sign in? do it NOW");
                     login_text.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -249,5 +268,12 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     }
 
 
+    public DatabaseReference getDB(){
+        return mDatabase;
+    }
+
+    public FirebaseAuth getAuth(){
+        return mAuth;
+    }
 
 }

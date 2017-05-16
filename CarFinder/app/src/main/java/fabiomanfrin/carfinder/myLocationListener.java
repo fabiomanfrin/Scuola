@@ -24,12 +24,10 @@ public class myLocationListener implements LocationListener {
 
     private TextView t; //testo per veder le coordinate solo provvisorio
     private String TAG="myTAG";
-    private Fragment f;
     private HomeFragment hf;
-    public myLocationListener(TextView t, Fragment f){
-        this.t=t;
-        this.f=f;
+    public myLocationListener( Fragment f){
         hf=(HomeFragment)f;
+        t=hf.getLocationText();
 
     }
 
