@@ -50,7 +50,7 @@ public class myLocationListener implements LocationListener {
             if(mMap!=null){
                 //qui ogni volta che richiede la posizione ricarica la strada sulla mappa
                 //da implementare
-                String url=hf.makeURL(location.getLatitude(), location.getLongitude(), 45.4871763, 12.291384);
+                String url=hf.makeURL(location.getLatitude(), location.getLongitude(), hf.getSelectedLat(), hf.getSelectedLng());
                 mMap.clear();
 
                 DownloadTask downloadTask = new DownloadTask(hf);

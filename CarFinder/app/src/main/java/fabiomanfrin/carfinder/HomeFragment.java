@@ -24,7 +24,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +72,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private long minTime =1 * 30 * 1000; //30 seconds
     private float minDistance = 0;   //0 meters
+    private Spinner spinner;
     private TextView locationText;
     private Location location;
     private LocationManager locationManager;
@@ -78,6 +81,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private String userId;
+    private Double selectedLat;
+    private Double selectedLng;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -98,6 +103,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        spinner= (Spinner) getActivity().findViewById(R.id.spinner);
         beginAuth();
         locationText = (TextView) getActivity().findViewById(R.id.locationText);
         getLocation();
@@ -150,7 +156,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 if (location != null && mMap != null) {
-                    String url = makeURL(location.getLatitude(), location.getLongitude(), 45.4871763, 12.291384);   //google json from current location to chiesa di campalto
+
+                    String url = makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
                     Log.d(TAG, url);
 
 
@@ -175,13 +182,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
             mDatabase = ((Home) getActivity()).getDB();
-            // mDatabase.child("Parking").child(userId+"ciaoooooooooo").child("test").setValue("scritta222");
+            //mDatabase.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lat").setValue("45");
+            //mDatabase.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lng").setValue("12");
+
 
             mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String s = dataSnapshot.child("Parking").child(userId).child("test").getValue().toString();
-                    Log.d(TAG, "onDataChange: " + s);
+                    selectedLat=Double.parseDouble(dataSnapshot.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lat").getValue().toString());
+                    selectedLng=Double.parseDouble(dataSnapshot.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lng").getValue().toString());
+                    String  p=dataSnapshot.child("Users").child(userId).child("Parkings").child("1").getKey();
+                    String [] array=new String[]{p};
+                    ArrayAdapter<String>arrayAdapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,array);
+                    spinner.setAdapter(arrayAdapter);
+                    Log.d(TAG, "onDataChange: " + p);
                 }
 
                 @Override
@@ -329,5 +343,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public TextView getLocationText(){return locationText;}
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public Double getSelectedLat() {
+        return selectedLat;
+    }
+
+    public Double getSelectedLng() {
+        return selectedLng;
     }
 }
