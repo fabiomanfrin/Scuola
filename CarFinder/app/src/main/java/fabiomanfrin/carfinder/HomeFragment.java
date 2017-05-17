@@ -43,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
@@ -60,6 +61,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -70,7 +72,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     String TAG = "myTAG";
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime =1 * 30 * 1000; //30 seconds
+    private long minTime =1 * 10 * 1000; //10 seconds
     private float minDistance = 0;   //0 meters
     private Spinner spinner;
     private TextView locationText;
@@ -182,17 +184,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
             mDatabase = ((Home) getActivity()).getDB();
-            //mDatabase.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lat").setValue("45");
-            //mDatabase.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lng").setValue("12");
+            //mDatabase.child("Users").child(userId).child("Parkings").child("2").child("Coordinates").child("Lat").setValue("45");
+            //mDatabase.child("Users").child(userId).child("Parkings").child("2").child("Coordinates").child("Lng").setValue("12");
 
 
-            mDatabase.addValueEventListener(new ValueEventListener() {
+            DatabaseReference parkingRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Parkings");
+            parkingRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    selectedLat=Double.parseDouble(dataSnapshot.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lat").getValue().toString());
-                    selectedLng=Double.parseDouble(dataSnapshot.child("Users").child(userId).child("Parkings").child("1").child("Coordinates").child("Lng").getValue().toString());
-                    String  p=dataSnapshot.child("Users").child(userId).child("Parkings").child("1").getKey();
+                    selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
+                    selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
+                    //String  p=dataSnapshot.child("Users").child(userId).child("Parkings").child("1").getKey();
+
+                    String  p=dataSnapshot.child("2").getKey();
                     String [] array=new String[]{p};
+                    //String [] array=getParkings((Map<String,Object>) dataSnapshot.getValue()); //tentivo di prendere le chiavi dei parcheggi
                     ArrayAdapter<String>arrayAdapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,array);
                     spinner.setAdapter(arrayAdapter);
                     Log.d(TAG, "onDataChange: " + p);
@@ -206,6 +212,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
     }
+
+    private String [] getParkings(Map<String,Object> parkings) {
+
+        ArrayList<String> p = new ArrayList<>();
+
+        //iterate through each user, ignoring their UID
+        for (Map.Entry<String, Object> entry : parkings.entrySet()){
+
+            //Get user map
+           // Map singleParking = (Map) entry.getValue();
+            Log.d(TAG, "getParkings: sono entarto quiii");
+            String singleP=entry.getKey();
+            //Get phone field and append to list
+            p.add(singleP);
+        }
+
+        return (String [])p.toArray();
+    }
+
 
     public void initMap() {
         if (mMap == null) {
