@@ -85,9 +85,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private String userId;
-    private Double selectedLat=45.0;
-    private Double selectedLng=12.0;
-    private ArrayList<String> car_parkings;
+    private Double selectedLat;
+    private Double selectedLng;
+    private ArrayList<Parking> car_parkings;
+    private ArrayList<String> title_parkings;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -177,6 +178,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+
+
     }
 
     private void beginAuth() {
@@ -208,17 +211,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         spinner.setAdapter(arrayAdapter);
                         Log.d(TAG, "onDataChange: torna null0");
                     }else {
+                        Log.d(TAG, "onDataChange: sto per fare getParkings");
                         getParkings((Map<String, Object>) dataSnapshot.getValue());
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, car_parkings);
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, title_parkings);
                         spinner.setAdapter(arrayAdapter);
-                        /*spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                selectedLat=Double.parseDouble(mySnap.child("2").child("Coordinates").child("Lat").getValue().toString());
-                                selectedLng=Double.parseDouble(mySnap.child("2").child("Coordinates").child("Lng").getValue().toString());
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                String selectedP=spinner.getSelectedItem().toString();
+                                selectedLat=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lat").getValue().toString());
+                                selectedLng=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lng").getValue().toString());
+                                Toast.makeText(getContext(), selectedLat.toString(), Toast.LENGTH_SHORT).show();
                             }
-                        });*/
-                        Log.d(TAG, "onDataChange: " + car_parkings.toString());
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                        Log.d(TAG, "onDataChange: " + title_parkings.toString());
 
                         selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
                         selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
@@ -239,17 +252,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void getParkings(Map<String,Object> parkings) {
 
         car_parkings = new ArrayList<>();
-
+        title_parkings=new ArrayList<>();
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : parkings.entrySet()){
 
-            //Get user map
             Map singleParking = (Map) entry.getValue();
-            String singleP=entry.getKey();
-            car_parkings.add(singleP);
+            //Map coordinates=(Map)singleParking.get("coordinates");
+
+
+            String title=entry.getKey();
+            //Parking p=new Parking(title,Double.parseDouble(coordinates.get("Lat").toString()),Double.parseDouble(coordinates.get("Lng").toString()));
+            //car_parkings.add(p);
+            title_parkings.add(title);
         }
 
-        Log.d(TAG, "getParkings: "+car_parkings.toString());
+        Log.d(TAG, "getParkings: "+title_parkings.toString());
 
     }
 
@@ -273,7 +290,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
 /***at this time google play services are not initialize so get map and add what ever you want to it in onResume() or onStart() **/
+
     }
+
 
 
     @Override
