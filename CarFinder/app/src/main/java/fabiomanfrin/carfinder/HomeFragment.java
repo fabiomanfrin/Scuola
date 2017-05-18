@@ -213,7 +213,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     }else {
                         Log.d(TAG, "onDataChange: sto per fare getParkings");
                         getParkings((Map<String, Object>) dataSnapshot.getValue());
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, title_parkings);
+                        //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, title_parkings);
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(),R.layout.spinner_item, title_parkings);
                         spinner.setAdapter(arrayAdapter);
 
                         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -233,8 +234,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                         Log.d(TAG, "onDataChange: " + title_parkings.toString());
 
-                        selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
-                        selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
+                        //selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
+                        //selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
 
                     }
 
