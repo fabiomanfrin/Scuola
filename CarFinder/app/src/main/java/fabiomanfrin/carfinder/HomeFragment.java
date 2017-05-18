@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -44,6 +45,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
@@ -83,8 +85,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private String userId;
-    private Double selectedLat;
-    private Double selectedLng;
+    private Double selectedLat=45.0;
+    private Double selectedLng=12.0;
     private ArrayList<String> car_parkings;
 
     public HomeFragment() {
@@ -181,31 +183,48 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         //g;tting current account data
         mAuth=((Home)getActivity()).getAuth();
-        if(mAuth.getCurrentUser()!= null) {
+        //mAuth.getCurrentUser();
+        if(mAuth.getCurrentUser()!= null) { 
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
             mDatabase = ((Home) getActivity()).getDB();
             //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lat").setValue("45");
             //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lng").setValue("12");
+            Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
 
-
-            DatabaseReference parkingRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Parkings");
-            parkingRef.addValueEventListener(new ValueEventListener() {
+            //DatabaseReference parkingRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Parkings");
+            parkings.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
-                    selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
+                    //selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
+                    //selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
                     //String  p=dataSnapshot.child("Users").child(userId).child("Parkings").child("1").getKey();
 
 
-                    //Log.d(TAG, "onDataChange: "+dataSnapshot.getValue().toString());
+                    final DataSnapshot mySnap=dataSnapshot;
+                    if(dataSnapshot.getValue()==null){
+                        String [] empty=new String[]{"No car parking available"};
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, empty);
+                        spinner.setAdapter(arrayAdapter);
+                        Log.d(TAG, "onDataChange: torna null0");
+                    }else {
+                        getParkings((Map<String, Object>) dataSnapshot.getValue());
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, car_parkings);
+                        spinner.setAdapter(arrayAdapter);
+                        /*spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                selectedLat=Double.parseDouble(mySnap.child("2").child("Coordinates").child("Lat").getValue().toString());
+                                selectedLng=Double.parseDouble(mySnap.child("2").child("Coordinates").child("Lng").getValue().toString());
+                            }
+                        });*/
+                        Log.d(TAG, "onDataChange: " + car_parkings.toString());
 
-                    getParkings((Map<String,Object>) dataSnapshot.getValue());
-                    //String  p=dataSnapshot.child("2").getKey();
-                    //String [] array=(String[]) car_parkings.toArray();
-                    ArrayAdapter<String>arrayAdapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,car_parkings);
-                    spinner.setAdapter(arrayAdapter);
-                    Log.d(TAG, "onDataChange: " + car_parkings.toString());
+                        selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
+                        selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
+
+                    }
+
                 }
 
                 @Override
@@ -227,7 +246,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             //Get user map
             Map singleParking = (Map) entry.getValue();
             String singleP=entry.getKey();
-            //Get phone field and append to list
             car_parkings.add(singleP);
         }
 
