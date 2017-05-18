@@ -85,6 +85,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private String userId;
     private Double selectedLat;
     private Double selectedLng;
+    private ArrayList<String> car_parkings;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -184,8 +185,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
             mDatabase = ((Home) getActivity()).getDB();
-            //mDatabase.child("Users").child(userId).child("Parkings").child("2").child("Coordinates").child("Lat").setValue("45");
-            //mDatabase.child("Users").child(userId).child("Parkings").child("2").child("Coordinates").child("Lng").setValue("12");
+            //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lat").setValue("45");
+            //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lng").setValue("12");
 
 
             DatabaseReference parkingRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Parkings");
@@ -196,12 +197,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
                     //String  p=dataSnapshot.child("Users").child(userId).child("Parkings").child("1").getKey();
 
-                    String  p=dataSnapshot.child("2").getKey();
-                    String [] array=new String[]{p};
-                    //String [] array=getParkings((Map<String,Object>) dataSnapshot.getValue()); //tentivo di prendere le chiavi dei parcheggi
-                    ArrayAdapter<String>arrayAdapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,array);
+
+                    //Log.d(TAG, "onDataChange: "+dataSnapshot.getValue().toString());
+
+                    getParkings((Map<String,Object>) dataSnapshot.getValue());
+                    //String  p=dataSnapshot.child("2").getKey();
+                    //String [] array=(String[]) car_parkings.toArray();
+                    ArrayAdapter<String>arrayAdapter=new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,car_parkings);
                     spinner.setAdapter(arrayAdapter);
-                    Log.d(TAG, "onDataChange: " + p);
+                    Log.d(TAG, "onDataChange: " + car_parkings.toString());
                 }
 
                 @Override
@@ -213,23 +217,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private String [] getParkings(Map<String,Object> parkings) {
+    private void getParkings(Map<String,Object> parkings) {
 
-        ArrayList<String> p = new ArrayList<>();
+        car_parkings = new ArrayList<>();
 
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : parkings.entrySet()){
 
             //Get user map
-           // Map singleParking = (Map) entry.getValue();
-            Log.d(TAG, "getParkings: sono entarto quiii");
+            Map singleParking = (Map) entry.getValue();
             String singleP=entry.getKey();
             //Get phone field and append to list
-            p.add(singleP);
+            car_parkings.add(singleP);
         }
 
-        return (String [])p.toArray();
+        Log.d(TAG, "getParkings: "+car_parkings.toString());
+
     }
+
 
 
     public void initMap() {
