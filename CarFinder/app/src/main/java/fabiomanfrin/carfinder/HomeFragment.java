@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -134,26 +135,56 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Bundle b = new Bundle();
                 if (location == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Unable to add a new car parking cause current location missing")
-                            .setCancelable(false)
-                            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    Toast.makeText(getContext(), "Unable to add a new car parking cause current location missing", Toast.LENGTH_SHORT).show();
 
 
                 } else {
                     b.putDouble("lat", location.getLatitude());
                     b.putDouble("lng", location.getLongitude());
+
+                   /* TextView Coord=(TextView)getActivity().findViewById(R.id.coordinates_text);
+                    Button btnSave=(Button)getActivity().findViewById(R.id.SaveParking_button);
+                    Button btnCancel=(Button)getActivity().findViewById(R.id.cancel_button);
+
+                    final Double lat=location.getLatitude();
+                    final Double lng=location.getLongitude();
+                    LatLng latLng=new LatLng(lat,lng);
+                    Coord.setText(latLng.toString());
+
+                    //mAuth=((Home)getActivity()).getAuth();
+                    //mDatabase=((Home)getActivity()).getDB();
+                    final EditText title= (EditText) getActivity().findViewById(R.id.ParkingName_EditText);
+                    final EditText description= (EditText) getActivity().findViewById(R.id.Description_EditText);
+
+
+
+
+
+                    btnSave.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText().toString());
+                            mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
+                            mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
+                            Toast.makeText(getContext(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
+                            //((Home)getActivity()).replacefragment(new HomeFragment());
+                        }
+                    });
+                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getActivity(), "cancel", Toast.LENGTH_SHORT).show();
+                            ((Home)getActivity()).replacefragment(new HomeFragment());
+                        }
+                    });
+                    */
+
+
+                    addParkingFragment ap = new addParkingFragment();
+                    ap.setArguments(b);
+                    ((Home) getActivity()).replacefragment(ap);  // replace fragment in fragment layout with a addParking Fragment
+
                 }
-                addParkingFragment ap = new addParkingFragment();
-                ap.setArguments(b);
-                ((Home) getActivity()).replacefragment(ap);  // replace fragment in fragment layout with a addParking Fragment
 
             }
         });

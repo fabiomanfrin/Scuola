@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 
 /**
@@ -21,6 +24,9 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class addParkingFragment extends Fragment {
 
+    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
+    private static final String TAG="myTAG";
 
     public addParkingFragment() {
         // Required empty public constructor
@@ -43,16 +49,28 @@ public class addParkingFragment extends Fragment {
         Button btnSave=(Button)getActivity().findViewById(R.id.SaveParking_button);
         Button btnCancel=(Button)getActivity().findViewById(R.id.cancel_button);
         Bundle b=getArguments();
-        Double lat=b.getDouble("lat");
-        Double lng=b.getDouble("lng");
+        final Double lat=b.getDouble("lat");
+        final Double lng=b.getDouble("lng");
         LatLng latLng=new LatLng(lat,lng);
         text.setText(latLng.toString());
+
+        mAuth=((Home)getActivity()).getAuth();
+        mDatabase=((Home)getActivity()).getDB();
+        final EditText title= (EditText) getActivity().findViewById(R.id.ParkingName_EditText);
+        final EditText description= (EditText) getActivity().findViewById(R.id.Description_EditText);
+
+
+
 
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
+                //mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText().toString());
+                Log.d(TAG, "onClick: parking added");
+                mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
+                mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
+               // Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
                 ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });
@@ -63,6 +81,8 @@ public class addParkingFragment extends Fragment {
                 ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });
+
+
 
     }
 }
