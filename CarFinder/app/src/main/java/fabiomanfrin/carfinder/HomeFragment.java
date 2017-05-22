@@ -89,7 +89,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private ArrayList<Parking> car_parkings;
-    private ArrayList<String> title_parkings;
+    private ArrayList<String> title_parkings=new ArrayList<>();;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -225,6 +225,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lat").setValue("45");
             //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lng").setValue("12");
             Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(),R.layout.spinner_item, title_parkings);
+            spinner.setAdapter(arrayAdapter);
 
             //DatabaseReference parkingRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Parkings");
             parkings.addValueEventListener(new ValueEventListener() {
@@ -238,16 +240,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     final DataSnapshot mySnap=dataSnapshot;
                     if(dataSnapshot.getValue()==null){
                         String [] empty=new String[]{"No car parking available"};
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, empty);
-                        spinner.setAdapter(arrayAdapter);
+                        title_parkings=new ArrayList<>();
+                        title_parkings.add("No car parking available");
+                        arrayAdapter.notifyDataSetChanged();
+                        //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, empty);
+                        //spinner.setAdapter(arrayAdapter);
                         Log.d(TAG, "onDataChange: torna null0");
                     }else {
                         Log.d(TAG, "onDataChange: sto per fare getParkings");
+                        title_parkings=new ArrayList<>();
                         getParkings((Map<String, Object>) dataSnapshot.getValue());
                         //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, title_parkings);
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(),R.layout.spinner_item, title_parkings);
-                        spinner.setAdapter(arrayAdapter);
-
+                        arrayAdapter.notifyDataSetChanged();
                         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -284,7 +288,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void getParkings(Map<String,Object> parkings) {
 
         car_parkings = new ArrayList<>();
-        title_parkings=new ArrayList<>();
+       // title_parkings=new ArrayList<>();
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : parkings.entrySet()){
 

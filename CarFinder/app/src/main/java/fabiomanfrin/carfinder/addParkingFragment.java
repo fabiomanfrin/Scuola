@@ -72,6 +72,7 @@ public class addParkingFragment extends Fragment {
                 Log.d(TAG, "onClick: parking added");
                 mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
                 mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
+                ((Home)getActivity()).replacefragment(new HomeFragment());
                 //Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
             }
         });
