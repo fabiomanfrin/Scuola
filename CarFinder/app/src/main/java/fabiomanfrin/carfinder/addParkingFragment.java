@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -56,6 +57,7 @@ public class addParkingFragment extends Fragment {
 
         mAuth=((Home)getActivity()).getAuth();
         mDatabase=((Home)getActivity()).getDB();
+
         final EditText title= (EditText) getActivity().findViewById(R.id.ParkingName_EditText);
         final EditText description= (EditText) getActivity().findViewById(R.id.Description_EditText);
 
@@ -70,8 +72,7 @@ public class addParkingFragment extends Fragment {
                 Log.d(TAG, "onClick: parking added");
                 mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
                 mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
-               // Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
-                ((Home)getActivity()).replacefragment(new HomeFragment());
+                //Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
