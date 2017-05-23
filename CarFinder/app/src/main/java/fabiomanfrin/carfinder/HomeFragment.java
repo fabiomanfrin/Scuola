@@ -194,13 +194,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (location != null && mMap != null) {
+             /*   if (location != null && mMap != null) {
 
                     String url = makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
                     Log.d(TAG, url);
 
 
-                    //mMap.clear();
+                    mMap.clear();
 
                     DownloadTask downloadTask = new DownloadTask(HomeFragment.this);
                     // Start downloading json data from Google Directions API
@@ -208,7 +208,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
-                }
+                }*/
+             updatePath();
             }
         });
 
@@ -250,8 +251,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     if(dataSnapshot.getValue()==null){
                         //String [] empty=new String[]{"No car parking available"};
                         //title_parkings=new ArrayList<>();
-                        title_parkings.add("No car parking available");
-                        arrayAdapter.notifyDataSetChanged();
+                        //title_parkings.add("No car parking available");
+                        //arrayAdapter.notifyDataSetChanged();
                         //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, empty);
                         //spinner.setAdapter(arrayAdapter);
                         Log.d(TAG, "onDataChange: torna null0");
@@ -267,8 +268,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                 String selectedP=spinner.getSelectedItem().toString();
                                 selectedLat=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lat").getValue().toString());
                                 selectedLng=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lng").getValue().toString());
-                                Toast.makeText(getContext(), selectedLat.toString(), Toast.LENGTH_SHORT).show();
-
+                                //Toast.makeText(getContext(), selectedLat.toString(), Toast.LENGTH_SHORT).show();
+                                updatePath();
                             }
 
                             @Override
@@ -471,6 +472,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         String apiKey="AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
         urlString.append("&key="+apiKey);
         return urlString.toString();
+    }
+
+    public void updatePath(){
+        if (location != null && mMap != null) {
+
+            String url = makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
+            Log.d(TAG, url);
+
+
+            mMap.clear();
+
+            DownloadTask downloadTask = new DownloadTask(HomeFragment.this);
+            // Start downloading json data from Google Directions API
+            downloadTask.execute(url);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+        }
     }
 
     public GoogleMap getMap(){
