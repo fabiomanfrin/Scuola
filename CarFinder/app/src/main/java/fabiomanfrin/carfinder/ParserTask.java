@@ -103,10 +103,10 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
 
         map.addPolyline(lineOptions);
-        map.addMarker(new MarkerOptions()
+        /*map.addMarker(new MarkerOptions()
                 .position(points.get(points.size()-1))
                 .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));*/
 
 
         /* show every point on the map

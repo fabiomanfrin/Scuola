@@ -51,7 +51,7 @@ public class myLocationListener implements LocationListener {
                 //qui ogni volta che richiede la posizione ricarica la strada sulla mappa
                 //da implementare
                 String url=hf.makeURL(location.getLatitude(), location.getLongitude(), hf.getSelectedLat(), hf.getSelectedLng());
-                mMap.clear();
+                //mMap.clear();
 
                 DownloadTask downloadTask = new DownloadTask(hf);
                 // Start downloading json data from Google Directions API

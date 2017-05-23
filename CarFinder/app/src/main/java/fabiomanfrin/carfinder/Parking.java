@@ -8,14 +8,13 @@ import com.google.firebase.database.DataSnapshot;
 
 public class Parking {
     private String title;
-    private Double Lat;
-    private Double Lng;
+    private Coordinates c;
+
 
 
     public Parking(String title, Double lat, Double lng) {
         this.title = title;
-        Lat = lat;
-        Lng = lng;
+        c=new Coordinates(lat,lng);
 
     }
 
@@ -27,21 +26,34 @@ public class Parking {
         this.title = title;
     }
 
-    public Double getLat() {
-        return Lat;
+    public Coordinates getCoordinates() {
+        return c;
     }
 
-    public void setLat(Double lat) {
-        Lat = lat;
+    public Double getLat() {
+        return c.getLat();
     }
 
     public Double getLng() {
-        return Lng;
-    }
-
-    public void setLng(Double lng) {
-        Lng = lng;
+        return c.getLng();
     }
 
 
+    private class Coordinates {
+        private Double Lat;
+        private Double Lng;
+
+        public Coordinates(Double Lat,Double Lng){
+            this.Lat=Lat;
+            this.Lng=Lng;
+        }
+
+        public Double getLat() {
+            return Lat;
+        }
+
+        public Double getLng() {
+            return Lng;
+        }
+    }
 }
