@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -24,13 +25,16 @@ import java.util.List;
  */
 public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
-    Fragment f;
-    HomeFragment hf;
-    GoogleMap map;
+    private Fragment f;
+    private HomeFragment hf;
+    private GoogleMap mMap;
+    private ArrayList<Parking> car_parkings;
+    private String TAG="myTAG";
     public ParserTask(Fragment f){
         this.f=f;
         hf=(HomeFragment)f;
-        map=hf.getMap();
+        mMap=hf.getMap();
+        car_parkings=hf.getCarParkings();
 
     }
 
@@ -102,11 +106,32 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         // Drawing polyline in the Google Map for the i-th route
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
 
-        map.addPolyline(lineOptions);
-        /*map.addMarker(new MarkerOptions()
+        Double Lat;
+        Double Lng;
+        String title;
+        mMap.addPolyline(lineOptions);
+        for (int i=0;i<car_parkings.size();i++){
+
+            title=car_parkings.get(i).getTitle();
+            Lat=car_parkings.get(i).getLat();
+            Lng=car_parkings.get(i).getLng();
+
+            //Log.d(TAG, "onPostExecute: "+Lat+" "+Lng);
+            LatLng myLatLng=new LatLng(Lat,Lng);
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLatLng)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
+            Log.d(TAG, "mappa parser: "+title+myLatLng.toString());
+        }
+       /* mMap.addMarker(new MarkerOptions()
                 .position(points.get(points.size()-1))
                 .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));*/
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        mMap.addMarker(new MarkerOptions()
+                .position(points.get(0))
+                .title("Destination")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
 
 
         /* show every point on the map

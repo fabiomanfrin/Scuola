@@ -34,9 +34,7 @@ public class Parking {
         return c.getLat();
     }
 
-    public Double getLng() {
-        return c.getLng();
-    }
+    public Double getLng() {return c.getLng();}
 
 
     private class Coordinates {

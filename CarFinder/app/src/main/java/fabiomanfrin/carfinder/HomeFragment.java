@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -89,7 +90,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private ArrayList<Parking> car_parkings= new ArrayList<>();
-    private ArrayList<String> title_parkings=new ArrayList<>();;
+    private ArrayList<String> spinnerItem=new ArrayList<>();
+    private ArrayAdapter<String> arrayAdapter;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -112,6 +114,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
         spinner= (Spinner) getActivity().findViewById(R.id.spinner);
+        arrayAdapter= new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item, spinnerItem);
+        spinner.setAdapter(arrayAdapter);
         beginAuth();
         locationText = (TextView) getActivity().findViewById(R.id.locationText);
         getLocation();
@@ -235,9 +239,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lat").setValue("45");
             //mDatabase.child("Users").child(userId).child("Parkings").child("park1").child("Coordinates").child("Lng").setValue("12");
             Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item, title_parkings);
-            spinner.setAdapter(arrayAdapter);
+            //spinner.setAdapter(arrayAdapter);
 
+
+            
+            
+            
             //DatabaseReference parkingRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Parkings");
             parkings.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -251,8 +258,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     if(dataSnapshot.getValue()==null){
                         //String [] empty=new String[]{"No car parking available"};
                         //title_parkings=new ArrayList<>();
-                        //title_parkings.add("No car parking available");
-                        //arrayAdapter.notifyDataSetChanged();
+                        spinnerItem.add("No car parking available");
+                        arrayAdapter.notifyDataSetChanged();
                         //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, empty);
                         //spinner.setAdapter(arrayAdapter);
                         Log.d(TAG, "onDataChange: torna null0");
@@ -278,7 +285,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             }
                         });
 
-                        Log.d(TAG, "onDataChange: " + title_parkings.toString());
+                        Log.d(TAG, "onDataChange: " + spinnerItem.toString());
 
                         //selectedLat=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lat").getValue().toString());
                         //selectedLng=Double.parseDouble(dataSnapshot.child("2").child("Coordinates").child("Lng").getValue().toString());
@@ -293,6 +300,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             });
         }
+        else{
+            spinnerItem.add("log in to get this function");
+            arrayAdapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -306,15 +317,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Map singleParking = (Map) entry.getValue();
             Map coordinates=(Map)singleParking.get("Coordinates");
             String title=entry.getKey();
-            car_parkings.add(new Parking(title,Double.parseDouble(coordinates.get("Lat").toString()),Double.parseDouble(coordinates.get("Lat").toString())));
+            car_parkings.add(new Parking(title,Double.parseDouble(coordinates.get("Lat").toString()),Double.parseDouble(coordinates.get("Lng").toString())));
             //Parking p=new Parking(title,Double.parseDouble(coordinates..get("Lat").toString()),Double.parseDouble(coordinates.get("Lng").toString()));
             //car_parkings.add(p);
-            title_parkings.add(title);
+            spinnerItem.add(title);
+
         }
 
 
 
-        Log.d(TAG, "getParkings: "+title_parkings.toString());
+
 
     }
 
@@ -347,7 +359,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        mMap.setMapType(mMap.MAP_TYPE_HYBRID);
+        //mMap.setMapType(mMap.MAP_TYPE_HYBRID);
 
 
         /*mMap.addMarker(new MarkerOptions()
@@ -367,7 +379,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mMap.setMyLocationEnabled(true);
 
 
-        for (int i=0;i<car_parkings.size();i++){
+       /* for (int i=0;i<car_parkings.size();i++){
 
             String title=car_parkings.get(i).getTitle();
             Double Lat=car_parkings.get(i).getLat();
@@ -377,7 +389,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .position(myLatLng)
                     .title(title));
             Log.d(TAG, "mappa: "+title+myLatLng.toString());
-        }
+        }*/
         
 
     }
@@ -506,5 +518,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public Double getSelectedLng() {
         return selectedLng;
+    }
+
+    public ArrayList<Parking> getCarParkings() {
+        return car_parkings;
     }
 }

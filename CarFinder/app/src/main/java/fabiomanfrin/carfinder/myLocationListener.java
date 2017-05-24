@@ -46,8 +46,9 @@ public class myLocationListener implements LocationListener {
             Log.d(TAG, "onLocationChanged: "+currentLocation.toString());
 
 
+            //commentato solo per test ma funziona tutto
 
-            if(mMap!=null && hf.getSelectedLat()!=null && hf.getSelectedLng()!=null){
+           /* if(mMap!=null && hf.getSelectedLat()!=null && hf.getSelectedLng()!=null){
                 //qui ogni volta che richiede la posizione ricarica la strada sulla mappa
                 //da implementare
                 String url=hf.makeURL(location.getLatitude(), location.getLongitude(), hf.getSelectedLat(), hf.getSelectedLng());
@@ -58,9 +59,9 @@ public class myLocationListener implements LocationListener {
                 downloadTask.execute(url);
 
                /* mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));*/
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
-            }
+            }*/
 
             hf.setLocation(location);
 
