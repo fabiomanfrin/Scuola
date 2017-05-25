@@ -89,8 +89,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private String userId;
     private Double selectedLat;
     private Double selectedLng;
-    private ArrayList<Parking> car_parkings= new ArrayList<>();
-    private ArrayList<String> spinnerItem=new ArrayList<>();
+    private ArrayList<Parking> car_parkings;
+    private ArrayList<String> spinnerItem;
     private ArrayAdapter<String> arrayAdapter;
 
     public HomeFragment() {
@@ -114,6 +114,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
         spinner= (Spinner) getActivity().findViewById(R.id.spinner);
+        car_parkings=new ArrayList<>();
+        spinnerItem=new ArrayList<>();
         arrayAdapter= new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item, spinnerItem);
         spinner.setAdapter(arrayAdapter);
         beginAuth();
@@ -258,7 +260,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     if(dataSnapshot.getValue()==null){
                         //String [] empty=new String[]{"No car parking available"};
                         //title_parkings=new ArrayList<>();
-                        spinnerItem.add("No car parking available");
+                        spinnerItem.add("No car parkings available");
                         arrayAdapter.notifyDataSetChanged();
                         //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, empty);
                         //spinner.setAdapter(arrayAdapter);
@@ -269,6 +271,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         getParkings((Map<String, Object>) dataSnapshot.getValue());
                         //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, title_parkings);
                         arrayAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "onDataChange: ok ha superato getpark");
                         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -310,17 +313,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void getParkings(Map<String,Object> parkings) {
 
         //car_parkings = new ArrayList<>();
-       // title_parkings=new ArrayList<>();
+        //spinnerItem=new ArrayList<>();
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : parkings.entrySet()){
 
             Map singleParking = (Map) entry.getValue();
             Map coordinates=(Map)singleParking.get("Coordinates");
+            if(coordinates==null){
+                Log.d(TAG, "getParkings: coordinates null");
+            }
             String title=entry.getKey();
-            car_parkings.add(new Parking(title,Double.parseDouble(coordinates.get("Lat").toString()),Double.parseDouble(coordinates.get("Lng").toString())));
+            Log.d(TAG, "getParkings: entarto quiiiiiiiiii");
+            //Double Lat=Double.parseDouble(coordinates.get("Lat")+"");
+            //car_parkings.add(new Parking(title,coordinates.get("Lat").toString(),coordinates.get("Lng").toString()));
+            Log.d(TAG, "getParkings: "+coordinates.get("Lat"));
+            if(coordinates.get("Lat")!=null && coordinates.get("Lng")!=null) {
+                car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString())));
+            }
             //Parking p=new Parking(title,Double.parseDouble(coordinates..get("Lat").toString()),Double.parseDouble(coordinates.get("Lng").toString()));
             //car_parkings.add(p);
+
             spinnerItem.add(title);
+            Log.d(TAG, "getParkings: entarto quiiiiiiiiii1212121212121");
 
         }
 

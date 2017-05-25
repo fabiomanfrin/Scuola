@@ -106,24 +106,9 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         // Drawing polyline in the Google Map for the i-th route
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
 
-        Double Lat;
-        Double Lng;
-        String title;
+
         mMap.addPolyline(lineOptions);
-        for (int i=0;i<car_parkings.size();i++){
-
-            title=car_parkings.get(i).getTitle();
-            Lat=car_parkings.get(i).getLat();
-            Lng=car_parkings.get(i).getLng();
-
-            //Log.d(TAG, "onPostExecute: "+Lat+" "+Lng);
-            LatLng myLatLng=new LatLng(Lat,Lng);
-            mMap.addMarker(new MarkerOptions()
-                    .position(myLatLng)
-                    .title(title)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
-            Log.d(TAG, "mappa parser: "+title+myLatLng.toString());
-        }
+        loadParkings();
        /* mMap.addMarker(new MarkerOptions()
                 .position(points.get(points.size()-1))
                 .title("Destination")
@@ -147,7 +132,29 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
 
 
+
     }
 
+    private void loadParkings(){
+
+        Double Lat;
+        Double Lng;
+        String title;
+        for (int i=0;i<car_parkings.size();i++){
+
+            title=car_parkings.get(i).getTitle();
+            Lat=car_parkings.get(i).getLat();
+            Lng=car_parkings.get(i).getLng();
+
+            //Log.d(TAG, "onPostExecute: "+Lat+" "+Lng);
+            LatLng myLatLng=new LatLng(Lat,Lng);
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLatLng)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
+            Log.d(TAG, "mappa parser: "+title+myLatLng.toString());
+        }
+
+    }
 
 }
