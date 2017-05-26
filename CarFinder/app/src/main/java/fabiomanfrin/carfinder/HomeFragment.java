@@ -66,6 +66,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -92,6 +93,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private ArrayList<Parking> car_parkings;
     private ArrayList<String> spinnerItem;
     private ArrayAdapter<String> arrayAdapter;
+    private TextView descriptionText;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -113,6 +115,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
 
 
+        descriptionText= (TextView) getActivity().findViewById(R.id.descriptionText);
         spinner= (Spinner) getActivity().findViewById(R.id.spinner);
         car_parkings=new ArrayList<>();
         spinnerItem=new ArrayList<>();
@@ -267,9 +270,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         Log.d(TAG, "onDataChange: torna null0");
                     }else {
                         Log.d(TAG, "onDataChange: sto per fare getParkings");
-                        //title_parkings=new ArrayList<>();
                         getParkings((Map<String, Object>) dataSnapshot.getValue());
-                        //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, title_parkings);
+
                         arrayAdapter.notifyDataSetChanged();
                         Log.d(TAG, "onDataChange: ok ha superato getpark");
                         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -278,7 +280,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                 String selectedP=spinner.getSelectedItem().toString();
                                 selectedLat=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lat").getValue().toString());
                                 selectedLng=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lng").getValue().toString());
-                                //Toast.makeText(getContext(), selectedLat.toString(), Toast.LENGTH_SHORT).show();
+                                String description=mySnap.child(selectedP).child("Description").getValue().toString();
+                                descriptionText.setText(description);
+                                //Toast.makeText(getContext(), selectedLat.toString(), Toast.LGTH_SHORT).show();
                                 updatePath();
                             }
 
@@ -318,17 +322,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         for (Map.Entry<String, Object> entry : parkings.entrySet()){
 
             Map singleParking = (Map) entry.getValue();
+            Object description=singleParking.get("Description");
             Map coordinates=(Map)singleParking.get("Coordinates");
-            if(coordinates==null){
-                Log.d(TAG, "getParkings: coordinates null");
-            }
             String title=entry.getKey();
-            Log.d(TAG, "getParkings: entarto quiiiiiiiiii");
+
+            if(coordinates==null || description==null){
+                Log.d(TAG, "getParkings: coordinates or description null");
+            }
+
+            //Log.d(TAG, "getParkings: entarto quiiiiiiiiii"+singleParking.get("Description"));
             //Double Lat=Double.parseDouble(coordinates.get("Lat")+"");
             //car_parkings.add(new Parking(title,coordinates.get("Lat").toString(),coordinates.get("Lng").toString()));
-            Log.d(TAG, "getParkings: "+coordinates.get("Lat"));
-            if(coordinates.get("Lat")!=null && coordinates.get("Lng")!=null) {
-                car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString())));
+            //Log.d(TAG, "getParkings: "+coordinates.get("Lat"));
+            else if(coordinates.get("Lat")!=null && coordinates.get("Lng")!=null) {
+                Log.d(TAG, "description: "+description);
+                car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()),description.toString()));
             }
             //Parking p=new Parking(title,Double.parseDouble(coordinates..get("Lat").toString()),Double.parseDouble(coordinates.get("Lng").toString()));
             //car_parkings.add(p);

@@ -9,12 +9,15 @@ import com.google.firebase.database.DataSnapshot;
 public class Parking {
     private String title;
     private Coordinates c;
+    private String description;
 
 
 
-    public Parking(String title, Double lat, Double lng) {
+    public Parking(String title, Double lat, Double lng,String description) {
         this.title = title;
         c=new Coordinates(lat,lng);
+        this.description=description;
+
 
     }
 
@@ -36,6 +39,9 @@ public class Parking {
 
     public Double getLng() {return c.getLng();}
 
+    public String getDescription() {
+        return description;
+    }
 
     private class Coordinates {
         private Double Lat;

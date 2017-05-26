@@ -45,7 +45,6 @@ public class addParkingFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        EditText editText=(EditText)getActivity().findViewById(R.id.ParkingName_EditText);
         TextView text=(TextView)getActivity().findViewById(R.id.coordinates_text);
         Button btnSave=(Button)getActivity().findViewById(R.id.SaveParking_button);
         Button btnCancel=(Button)getActivity().findViewById(R.id.cancel_button);
@@ -70,8 +69,10 @@ public class addParkingFragment extends Fragment {
             public void onClick(View v) {
                 //mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText().toString());
                 Log.d(TAG, "onClick: parking added");
+                mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText()+"");
                 mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
                 mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
+
                 ((Home)getActivity()).replacefragment(new HomeFragment());
                 //Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
             }
