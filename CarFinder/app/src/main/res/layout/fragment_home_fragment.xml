@@ -9,26 +9,25 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/background_light">
 
         <Button
             android:id="@+id/refresh_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ADD POLYLINE"
+            android:layout_marginLeft="0dp"
+            android:autoText="false"
+            android:background="@color/colorAccent"
+            android:text="REFRESH"
             android:textAppearance="@android:style/TextAppearance.Material.Medium"
-            android:layout_marginRight="8dp"
+            android:textColor="@android:color/background_light"
+            app:layout_constraintLeft_toLeftOf="@+id/guideline"
+            android:layout_marginTop="34dp"
+            app:layout_constraintTop_toBottomOf="@+id/locationText"
+            android:layout_marginRight="0dp"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="8dp"
-            app:layout_constraintVertical_bias="0.3"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            app:layout_constraintHorizontal_bias="0.5" />
 
         <TextView
             android:id="@+id/locationText"
@@ -36,19 +35,17 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:text="teeeext"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintVertical_bias="0.0" />
+            android:layout_marginTop="8dp"
+            android:text="teeeext"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
         <fragment
             android:id="@+id/mini_map"
@@ -63,13 +60,13 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="32dp"
             app:layout_constraintTop_toBottomOf="@+id/refresh_button"
-            app:layout_constraintVertical_bias="0.365" />
+            app:layout_constraintVertical_bias="0.0" />
 
 
         <android.support.design.widget.FloatingActionButton
@@ -79,47 +76,49 @@
             android:layout_alignEnd="@+id/mini_map"
             android:layout_below="@+id/locationText"
             android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
-            android:tint="@color/colorPrimary"
-            app:backgroundTint="@android:color/background_light"
+            android:tint="@android:color/background_light"
+            app:backgroundTint="@color/colorAccent"
             app:rippleColor="@android:color/transparent"
             app:srcCompat="@android:drawable/ic_input_add"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginRight="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="8dp"
-            app:layout_constraintVertical_bias="0.3"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginRight="0dp"
+            app:layout_constraintRight_toRightOf="@+id/mini_map"
+            android:layout_marginLeft="0dp"
+            app:layout_constraintLeft_toLeftOf="@+id/guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/mini_map"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintTop_toTopOf="@+id/mini_map"
+            android:layout_marginTop="0dp"
+            app:layout_constraintVertical_bias="0.050000012" />
 
         <android.support.constraint.Guideline
+            android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/guideline"
-            app:layout_constraintGuide_begin="20dp"
             android:orientation="vertical"
-            tools:layout_editor_absoluteY="81dp"
-            tools:layout_editor_absoluteX="20dp" />
+            app:layout_constraintGuide_begin="20dp"
+            tools:layout_editor_absoluteX="20dp"
+            tools:layout_editor_absoluteY="81dp" />
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/refresh_button"
+            android:backgroundTint="@color/colorAccent"
+            android:dropDownWidth="match_parent"
+            android:popupBackground="@android:color/background_light"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationText"
-            tools:textAlignment="center" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:textAlignment="viewStart" />
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

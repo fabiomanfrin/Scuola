@@ -116,7 +116,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         spinner= (Spinner) getActivity().findViewById(R.id.spinner);
         car_parkings=new ArrayList<>();
         spinnerItem=new ArrayList<>();
-        arrayAdapter= new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item, spinnerItem);
+        arrayAdapter= new ArrayAdapter<String>(getContext(),R.layout.spinner_item, spinnerItem);
         spinner.setAdapter(arrayAdapter);
         beginAuth();
         locationText = (TextView) getActivity().findViewById(R.id.locationText);
@@ -512,8 +512,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             DownloadTask downloadTask = new DownloadTask(HomeFragment.this);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+            //mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
 
         }
     }
