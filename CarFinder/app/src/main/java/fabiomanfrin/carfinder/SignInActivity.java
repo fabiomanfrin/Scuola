@@ -50,6 +50,7 @@ public class SignInActivity extends AppCompatActivity {
                 if(firebaseAuth.getCurrentUser()!=null){
 
                     startActivity(new Intent(SignInActivity.this,Home.class));
+                    finish();
 
                 }
             }

@@ -137,7 +137,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             locationText.setText(currentLocation.toString());
         } else {
-            locationText.setText("Location not found");
+            locationText.setText("Searching for a location...");
         }
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.addParking_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +222,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        FloatingActionButton drawPath_fab = (FloatingActionButton) getActivity().findViewById(R.id.drawPath_fab);
+        drawPath_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(spinnerItem.size()!=0) {
+                    updatePath();
+                }
+            }
+        });
 
 
 
@@ -272,6 +281,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         Log.d(TAG, "onDataChange: sto per fare getParkings");
                         getParkings((Map<String, Object>) dataSnapshot.getValue());
 
+                        //loadParkings();
                         arrayAdapter.notifyDataSetChanged();
                         Log.d(TAG, "onDataChange: ok ha superato getpark");
                         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -281,9 +291,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                 selectedLat=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lat").getValue().toString());
                                 selectedLng=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lng").getValue().toString());
                                 String description=mySnap.child(selectedP).child("Description").getValue().toString();
-                                descriptionText.setText(description);
+                                String subDes=description.length()<20?description:description.substring(0,19)+"...";
+                                descriptionText.setText(subDes);
                                 //Toast.makeText(getContext(), selectedLat.toString(), Toast.LGTH_SHORT).show();
-                                updatePath();
+                                //updatePath();
                             }
 
                             @Override
@@ -313,6 +324,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
     }
+
 
     private void getParkings(Map<String,Object> parkings) {
 
@@ -344,12 +356,34 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             spinnerItem.add(title);
             Log.d(TAG, "getParkings: entarto quiiiiiiiiii1212121212121");
 
+
         }
 
 
 
 
 
+    }
+
+    private void loadParkings() {
+
+        Double Lat;
+        Double Lng;
+        String title;
+        for (int i = 0; i < car_parkings.size(); i++) {
+
+            title = car_parkings.get(i).getTitle();
+            Lat = car_parkings.get(i).getLat();
+            Lng = car_parkings.get(i).getLng();
+
+            //Log.d(TAG, "onPostExecute: "+Lat+" "+Lng);
+            LatLng myLatLng = new LatLng(Lat, Lng);
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLatLng)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
+            Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
+        }
     }
 
 
