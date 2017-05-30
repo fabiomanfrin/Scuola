@@ -38,6 +38,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         mMap=hf.getMap();
         car_parkings=hf.getCarParkings();
 
+
     }
 
     // Parsing the data in non-ui thread

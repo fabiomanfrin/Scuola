@@ -19,24 +19,31 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private FragmentManager fm;
     private boolean doubleBackToExitPressedOnce = false;
-    private static final String TAG="myTAG";
+    private static final String TAG="myHOME";
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -51,6 +58,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private TextView email_text;
     private TextView login_text;
     private ImageView iView;
+    private ArrayList<Parking> car_parkings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        car_parkings=new ArrayList<>();
 
         //get authentication data
         mAuth=FirebaseAuth.getInstance();
@@ -149,6 +158,68 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         };
 
 
+
+        Query parkings=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
+        parkings.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final DataSnapshot mySnap=dataSnapshot;
+                if(dataSnapshot.getValue()==null){
+                    Log.d(TAG, "onDataChange: torna null0");
+                }else {
+                    Log.d(TAG, "onDataChange: sto per fare getParkings");
+                    getParkings((Map<String, Object>) dataSnapshot.getValue());
+
+                    Log.d(TAG, "onDataChange: ok ha superato getpark");
+
+                    for (int i=0;i<car_parkings.size();i++){
+                        Log.d(TAG, "HOME: "+car_parkings.get(i).getTitle());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    private void getParkings(Map<String,Object> parkings) {
+
+        for (Map.Entry<String, Object> entry : parkings.entrySet()) {
+
+            Map singleParking = (Map) entry.getValue();
+            Object description = singleParking.get("Description");
+            Map coordinates = (Map) singleParking.get("Coordinates");
+            String title = entry.getKey();
+
+            if (coordinates == null || description == null) {
+                Log.d(TAG, "getParkings: coordinates or description null");
+            } else if (coordinates.get("Lat") != null && coordinates.get("Lng") != null) {
+                Log.d(TAG, "description: " + description);
+                /*if(car_parkings.size()>0) {
+                    for (Parking p : car_parkings) {
+                        if (!p.getTitle().equals(title)) {
+                            car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
+                        }
+                    }
+                }else
+                {
+                    car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
+                }*/
+                car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
+
+            }
+
+
+        }
+    }
+
+    public ArrayList<Parking> getListParkings(){
+        return car_parkings;
     }
 
 

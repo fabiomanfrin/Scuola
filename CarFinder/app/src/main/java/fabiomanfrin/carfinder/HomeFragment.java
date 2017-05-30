@@ -75,7 +75,7 @@ import java.util.Objects;
  */
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
-    String TAG = "myTAG";
+    String TAG = "myHFragment";
     private MapFragment mapFragment;
     private GoogleMap mMap;
     private long minTime =2 * 1 * 1000; //2 seconds
@@ -172,12 +172,39 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         drawPath_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(spinnerItem.size()!=0) {
+                if(spinnerItem.size()!=0 && selectedLat!=null && selectedLng!=null) {
                     updatePath();
                 }
             }
         });
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedP=spinner.getSelectedItem().toString();
+                Log.d(TAG, "onItemSelected: "+selectedP);
+                Parking p;
+                for (Parking parking:car_parkings){
+
+                    if(parking.getTitle().equals(selectedP)){
+                        p=parking;
+                        selectedLat=p.getLat();
+                        selectedLng=p.getLng();
+                        String description=p.getDescription();
+                        String subDes=description.length()<50?description:description.substring(0,49)+"...";
+                        descriptionText.setText(subDes);
+                        break;
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 
@@ -192,7 +219,43 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
             mDatabase = ((Home) getActivity()).getDB();
-            Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
+
+
+            mDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    //spinnerItem=new ArrayList<>();
+                    //car_parkings=((Home)getActivity()).getListParkings();
+                    final DataSnapshot mySnap=dataSnapshot;
+                    if(dataSnapshot.getValue()==null) {
+                        spinnerItem.add("No car parkings available");
+                        arrayAdapter.notifyDataSetChanged();
+                        Log.d(TAG, " torna null0");
+                    }
+                    else{
+                        Log.d(TAG, " sto per fare getParkings");
+                        for (Parking p : car_parkings) {
+                            spinnerItem.add(p.getTitle());
+                        }
+
+                        if (mMap != null) {
+                            loadParkings();
+                        }
+
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+           /* Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
             parkings.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -203,10 +266,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         Log.d(TAG, "onDataChange: torna null0");
                     }else {
                         Log.d(TAG, "onDataChange: sto per fare getParkings");
-                        getParkings((Map<String, Object>) dataSnapshot.getValue());
+                        //getParkings((Map<String, Object>) dataSnapshot.getValue());
+                        car_parkings=((Home)getActivity()).getListParkings();
+                        if(car_parkings!=null) {
+                            for (Parking p : car_parkings) {
+                                spinnerItem.add(p.getTitle());
+                            }
 
-                        if(mMap!=null) {
-                            loadParkings();
+                            if (mMap != null) {
+                                loadParkings();
+                            }
+                        }else
+                        {
+                            Log.d(TAG, "onDataChange: car_p è nullo");
                         }
                         arrayAdapter.notifyDataSetChanged();
                         Log.d(TAG, "onDataChange: ok ha superato getpark");
@@ -237,7 +309,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            });*/
         }
         else{
             spinnerItem.add("log in to get this function");
@@ -316,6 +388,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
 /***at this time google play services are not initialize so get map and add what ever you want to it in onResume() or onStart() **/
+
+        car_parkings=((Home)getActivity()).getListParkings();
+
 
     }
 
