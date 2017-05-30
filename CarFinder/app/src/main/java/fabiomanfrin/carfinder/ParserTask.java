@@ -4,8 +4,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -80,10 +82,11 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
                 if (j == 0) {    // Get distance from the list
                     distance = point.get("distance");
-                    //continue;
+                    continue;
                 } else if (j == 1) { // Get duration from the list
                     duration = point.get("duration");
-                    //continue;
+
+                    continue;
                 }
 
 
@@ -105,34 +108,10 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
         // Drawing polyline in the Google Map for the i-th route
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
-
+        Toast.makeText(hf.getActivity(), "Distance:" + distance + ", Duration:" + duration, Toast.LENGTH_SHORT).show();
 
         mMap.addPolyline(lineOptions);
         loadParkings();
-       /* mMap.addMarker(new MarkerOptions()
-                .position(points.get(points.size()-1))
-                .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        mMap.addMarker(new MarkerOptions()
-                .position(points.get(0))
-                .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
-
-
-        /* show every point on the map
-
-
-        for (int i=0;i<points.size();i++){
-            map.addMarker(new MarkerOptions()
-                    .position(points.get(i))
-                    .title("Marker "+i));
-        }
-        */
-
-
-
-
-
     }
 
     private void loadParkings(){

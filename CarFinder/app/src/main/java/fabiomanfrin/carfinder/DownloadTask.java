@@ -27,6 +27,7 @@ import java.util.List;
 
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
+    String TAG="download";
     Fragment f;
     public DownloadTask(Fragment f){
         this.f=f;
@@ -42,6 +43,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
         try {
             // Fetching the data from web service
             data = downloadUrl(url[0]);
+            Log.d(TAG, "doInBackground: "+data);
         } catch (Exception e) {
             Log.d("TAG", e.toString());
         }
