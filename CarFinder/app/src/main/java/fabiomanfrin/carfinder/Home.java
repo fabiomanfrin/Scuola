@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -159,8 +160,47 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
 
 
+
+        //Query parkings=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
+        //////////////////////
         Query parkings=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
-        parkings.addValueEventListener(new ValueEventListener() {
+        parkings.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, "onChildAdded: "+dataSnapshot.getKey());
+
+                if(dataSnapshot.getValue()!=null ) {
+                    String title=dataSnapshot.getKey();
+                    Map singleParking = (Map) dataSnapshot.getValue();
+                    Object description = singleParking.get("Description");
+                    Map coordinates = (Map) singleParking.get("Coordinates");
+                    car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
+
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //////////////////////
+      /*  parkings.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final DataSnapshot mySnap=dataSnapshot;
@@ -182,7 +222,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
 
     }

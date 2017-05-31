@@ -221,7 +221,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             mDatabase = ((Home) getActivity()).getDB();
 
 
-            mDatabase.addValueEventListener(new ValueEventListener() {
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final DataSnapshot mySnap=dataSnapshot;
+                    if(dataSnapshot.getValue()==null) {
+                        spinnerItem.add("No car parkings available");
+                        arrayAdapter.notifyDataSetChanged();
+                        Log.d(TAG, " torna null0");
+                    }
+                    else{
+                        Log.d(TAG, " sto per fare getParkings");
+                        for (Parking p : car_parkings) {
+                            spinnerItem.add(p.getTitle());
+                        }
+
+                        if (mMap != null) {
+                            loadParkings();
+                        }
+
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+          /*  mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     //spinnerItem=new ArrayList<>();
@@ -252,8 +283,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            });*/
 
+
+          //////////////////////////////////////////////////////////////////////////////////
 
            /* Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
             parkings.addValueEventListener(new ValueEventListener() {
