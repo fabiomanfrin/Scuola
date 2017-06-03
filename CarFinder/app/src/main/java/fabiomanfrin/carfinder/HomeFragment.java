@@ -3,16 +3,14 @@ package fabiomanfrin.carfinder;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.Settings;
@@ -20,7 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +25,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,34 +35,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
@@ -78,14 +55,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     String TAG = "myHFragment";
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime =2 * 1 * 1000; //2 seconds
-    private float minDistance = 0;   //0 meters
+    private long minTime =1 * 30 * 1000; //30 seconds
+    private float minDistance = 25;   //25 meters
     private Spinner spinner;
+
+    //location variables
     private TextView locationText;
     private Location location;
     private LocationManager locationManager;
+    private LocationListener locListener;
     private String bestProvider;
     private myLocationListener myLocListener;
+
+    //firebase variables
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private String userId;
@@ -112,6 +94,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
+    public void onPause() {
+        locationManager.removeUpdates(locListener);
+        super.onPause();
+
+    }
+
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -124,7 +114,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         spinner.setAdapter(arrayAdapter);
         beginAuth();
         locationText = (TextView) getActivity().findViewById(R.id.locationText);
-        getLocation();
+        startLocationUpdates();
+        //getLocation();
         initMap();
 
 
@@ -405,7 +396,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public void initMap() {
         if (mMap == null) {
-            mapFragment=(MapFragment) getChildFragmentManager().findFragmentById(R.id.mini_map);
+            mapFragment=(MapFragment) getChildFragmentManager().findFragmentById(R.id.map_full);
             mapFragment.getMapAsync(this);
         }
 
@@ -521,6 +512,59 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    public void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER)) {
+            locListener=new LocationListener() {
+                private boolean firstTime=true;
+                @Override
+                public void onLocationChanged(Location location) {
+
+                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    TextView t = (TextView) getActivity().findViewById(R.id.locationText);
+                    t.setText(currentLocation.toString());
+                    setLocation(location);
+                    //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
+                    if(firstTime){
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                        mMap.moveCamera(CameraUpdateFactory.zoomTo(15)); //15 streets view
+                        firstTime=false;
+                    }
+                    // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, minTime, minDistance, locListener);
+        }
+    }
+
+
 
     public String makeURL (double sourcelat, double sourcelog, double destlat, double destlog ){
         StringBuilder urlString = new StringBuilder();
@@ -547,7 +591,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             String url = makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
             mMap.clear();
-            DownloadTask downloadTask = new DownloadTask(HomeFragment.this);
+            DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
 

@@ -29,16 +29,23 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
     private Fragment f;
     private HomeFragment hf;
-    private GoogleMap mMap;
     private ArrayList<Parking> car_parkings;
     private String TAG="myTAG";
-    public ParserTask(Fragment f){
+  /*  public ParserTask(Fragment f){
         this.f=f;
         hf=(HomeFragment)f;
         mMap=hf.getMap();
         car_parkings=hf.getCarParkings();
 
 
+    }*/
+    private GoogleMap mMap;
+    /*public DownloadTask(Fragment f){
+        this.f=f;
+    }*/
+    public ParserTask(Home home,GoogleMap map){
+        mMap=map;
+        car_parkings=home.getListParkings();
     }
 
     // Parsing the data in non-ui thread
@@ -109,7 +116,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
         // Drawing polyline in the Google Map for the i-th route
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
-        Toast.makeText(hf.getActivity(), "Distance:" + distance + ", Duration:" + duration, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(hf.getActivity(), "Distance:" + distance + ", Duration:" + duration, Toast.LENGTH_SHORT).show();
 
         mMap.addPolyline(lineOptions);
         loadParkings();

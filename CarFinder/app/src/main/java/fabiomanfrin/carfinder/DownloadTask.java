@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -29,8 +30,14 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
     String TAG="download";
     Fragment f;
-    public DownloadTask(Fragment f){
+    private Home h;
+    private GoogleMap mMap;
+    /*public DownloadTask(Fragment f){
         this.f=f;
+    }*/
+    public DownloadTask(Home home,GoogleMap map){
+        mMap=map;
+        h=home;
     }
 
     // Downloading data in non-ui thread
@@ -56,7 +63,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
 
-        ParserTask parserTask = new ParserTask(f);
+        ParserTask parserTask = new ParserTask(h,mMap);
 
         // Invokes the thread for parsing the JSON data
         parserTask.execute(result);

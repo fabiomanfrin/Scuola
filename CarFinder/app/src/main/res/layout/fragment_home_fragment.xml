@@ -61,7 +61,7 @@
             android:layout_marginEnd="16dp" />
 
         <fragment
-            android:id="@+id/mini_map"
+            android:id="@+id/map_full"
             android:name="fabiomanfrin.carfinder.HomeFragment"
             class="com.google.android.gms.maps.MapFragment"
             android:layout_width="0dp"
@@ -86,7 +86,7 @@
             android:id="@+id/addParking_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/mini_map"
+            android:layout_alignEnd="@+id/map_full"
             android:layout_below="@+id/locationText"
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
@@ -96,10 +96,10 @@
             android:tint="@android:color/background_light"
             app:backgroundTint="@color/colorAccent"
             app:fabSize="normal"
-            app:layout_constraintBottom_toTopOf="@+id/mini_map"
+            app:layout_constraintBottom_toTopOf="@+id/map_full"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/guideline"
-            app:layout_constraintRight_toRightOf="@+id/mini_map"
+            app:layout_constraintRight_toRightOf="@+id/map_full"
             app:rippleColor="@android:color/transparent"
             app:srcCompat="@android:drawable/ic_input_add" />
 
@@ -140,7 +140,7 @@
             android:clickable="true"
             android:tint="@android:color/background_light"
             app:fabSize="normal"
-            app:layout_constraintBottom_toTopOf="@+id/mini_map"
+            app:layout_constraintBottom_toTopOf="@+id/map_full"
             app:layout_constraintHorizontal_bias="0.973"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

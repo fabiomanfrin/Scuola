@@ -358,8 +358,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             case R.id.editCarPark_menu:
                 break;
             case R.id.map_full:
-                Intent map_full=new Intent(Home.this,MapsActivity.class);
-                startActivity(map_full);
+                replacefragment(new MapsFragment());
+                //Intent map_full=new Intent(Home.this,MapsActivity.class);
+                //startActivity(map_full);
                 break;
             case R.id.settings_menu:
                 break;
