@@ -375,6 +375,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 replacefragment(new HomeFragment());
                 break;
             case R.id.editCarPark_menu:
+                replacefragment(new EditFragment());
                 break;
             case R.id.map_full:
                 replacefragment(new MapsFragment());
