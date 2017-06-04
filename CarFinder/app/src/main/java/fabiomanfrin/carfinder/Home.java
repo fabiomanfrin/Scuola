@@ -262,6 +262,25 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         return car_parkings;
     }
 
+    public String makeURL (double sourcelat, double sourcelog, double destlat, double destlog ){
+        StringBuilder urlString = new StringBuilder();
+        urlString.append("https://maps.googleapis.com/maps/api/directions/json");
+        urlString.append("?origin=");// from
+        urlString.append(Double.toString(sourcelat));
+        urlString.append(",");
+        urlString
+                .append(Double.toString( sourcelog));
+        urlString.append("&destination=");// to
+        urlString
+                .append(Double.toString( destlat));
+        urlString.append(",");
+        urlString.append(Double.toString(destlog));
+        urlString.append("&sensor=false&mode=walking&alternatives=true");
+        String apiKey="AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
+        urlString.append("&key="+apiKey);
+        return urlString.toString();
+    }
+
 
     /////////////////////////////////////
     private static final int PERMISSIONS_REQUEST = 1;

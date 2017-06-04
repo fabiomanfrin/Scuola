@@ -65,7 +65,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private LocationManager locationManager;
     private LocationListener locListener;
     private String bestProvider;
-    private myLocationListener myLocListener;
+    private Criteria mCriteria;
 
     //firebase variables
     private DatabaseReference mDatabase;
@@ -434,6 +434,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
         mMap.setMyLocationEnabled(true);
 
+            if (location != null) {
+               // Log.e("TAG", "GPS is on");
+                final double currentLatitude = location.getLatitude();
+                final double currentLongitude = location.getLongitude();
+                LatLng loc1 = new LatLng(currentLatitude, currentLongitude);
+                //mMap.addMarker(new MarkerOptions().position(loc1).title("Your Current Location"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude, currentLongitude), 15));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+            }
+
+
         if(car_parkings.size()!=0) {
             loadParkings();
         }
@@ -442,7 +453,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-    public void getLocation(){
+    /*public void getLocation(){
         myLocListener = new myLocationListener(HomeFragment.this);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
@@ -509,7 +520,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-    }
+    }*/
 
 
     public void startLocationUpdates() {
@@ -525,9 +536,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+        //getting the last known location
+        mCriteria = new Criteria();
+        bestProvider = String.valueOf(locationManager.getBestProvider(mCriteria, true));
+        location = locationManager.getLastKnownLocation(bestProvider);
+
         if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER)) {
             locListener=new LocationListener() {
-                private boolean firstTime=true;
                 @Override
                 public void onLocationChanged(Location location) {
 
@@ -536,11 +552,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     t.setText(currentLocation.toString());
                     setLocation(location);
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
-                    if(firstTime){
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                        mMap.moveCamera(CameraUpdateFactory.zoomTo(15)); //15 streets view
-                        firstTime=false;
-                    }
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
                 }
@@ -566,29 +577,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-    public String makeURL (double sourcelat, double sourcelog, double destlat, double destlog ){
-        StringBuilder urlString = new StringBuilder();
-        urlString.append("https://maps.googleapis.com/maps/api/directions/json");
-        urlString.append("?origin=");// from
-        urlString.append(Double.toString(sourcelat));
-        urlString.append(",");
-        urlString
-                .append(Double.toString( sourcelog));
-        urlString.append("&destination=");// to
-        urlString
-                .append(Double.toString( destlat));
-        urlString.append(",");
-        urlString.append(Double.toString(destlog));
-        urlString.append("&sensor=false&mode=walking&alternatives=true");
-        String apiKey="AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
-        urlString.append("&key="+apiKey);
-        return urlString.toString();
-    }
+
 
     public void updatePath(){
         if (location != null && mMap != null) {
 
-            String url = makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
+            String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
             mMap.clear();
             DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);

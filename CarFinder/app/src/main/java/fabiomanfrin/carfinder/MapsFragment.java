@@ -3,12 +3,14 @@ package fabiomanfrin.carfinder;
 
 import android.*;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -39,8 +42,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
     private MapFragment mapFragment;
     private GoogleMap mMap;
     private ArrayList<Parking> car_parkings;
+    
+    //location variables
     private LocationListener locListener;
     private LocationManager locationManager;
+    private String bestProvider;
+    private Criteria mCriteria;
+    private Location location;
+    private Double selectedLat;
+    private Double selectedLng;
 
 
     public MapsFragment() {
@@ -81,6 +91,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+
+
         /*if (location!=null){
             LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
@@ -91,9 +103,37 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
         }
         mMap.setMyLocationEnabled(true);
 
+        //move the camera to the last known location
+        if (location != null) {
+            // Log.e("TAG", "GPS is on");
+            final double currentLatitude = location.getLatitude();
+            final double currentLongitude = location.getLongitude();
+            LatLng loc1 = new LatLng(currentLatitude, currentLongitude);
+            //mMap.addMarker(new MarkerOptions().position(loc1).title("Your Current Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude, currentLongitude), 15));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+        }
+
         if(car_parkings.size()!=0) {
             loadParkings();
         }
+
+        setMarkerListener();
+
+
+    }
+
+    private void setMarkerListener() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                LatLng position=marker.getPosition();
+                selectedLat=position.latitude;
+                selectedLng=position.longitude;
+                updatePath();
+                return true;
+            }
+        });
     }
 
     private void loadParkings() {
@@ -116,6 +156,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
         }
     }
 
+    public void updatePath(){
+        if (location != null && mMap != null) {
+
+            String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
+            Log.d(TAG, url);
+            mMap.clear();
+            DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);
+            // Start downloading json data from Google Directions API
+            downloadTask.execute(url);
+
+        }
+    }
+
     public void getLocation() {
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -128,23 +181,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
             return;
         }
         locationManager = (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
+
+        //getting the last known location
+        mCriteria = new Criteria();
+        bestProvider = String.valueOf(locationManager.getBestProvider(mCriteria, true));
+        location = locationManager.getLastKnownLocation(bestProvider);
         if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER)) {
             locListener=new LocationListener() {
-                private boolean firstTime=true;
                 @Override
                 public void onLocationChanged(Location location) {
 
                     LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
                     TextView t= (TextView) getActivity().findViewById(R.id.coord_text);
                     t.setText(currentLocation.toString());
+                    setLocation(location);
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                    if(firstTime){
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                        mMap.moveCamera(CameraUpdateFactory.zoomTo(15)); //15 streets view
-                        firstTime=false;
-                    }
                 }
 
                 @Override
@@ -164,5 +217,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
             };
             locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 0, locListener);
         }
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
