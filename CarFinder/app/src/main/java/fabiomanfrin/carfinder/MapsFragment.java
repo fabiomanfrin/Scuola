@@ -135,25 +135,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
         });
     }
 
-    public void setInfoWindow(){
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                View v=getActivity().getLayoutInflater().inflate(R.layout.info_window,null);
-                TextView title= (TextView) getActivity().findViewById(R.id.titleMarker_text);
-                TextView draw= (TextView) getActivity().findViewById(R.id.startDraw_text);
-                title.setText(marker.getTitle());
-                draw.setText("draw path");
-
-                return v;
-            }
-        });
-    }
 
     private void setMarkerListener() {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

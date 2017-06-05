@@ -32,12 +32,21 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
     Fragment f;
     private Home h;
     private GoogleMap mMap;
+    private ProgressDialogFragment dialog;
     /*public DownloadTask(Fragment f){
         this.f=f;
     }*/
     public DownloadTask(Home home,GoogleMap map){
         mMap=map;
         h=home;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        dialog=new ProgressDialogFragment();
+        dialog.show(h.getFragmentManager(),"TAG");
+
     }
 
     // Downloading data in non-ui thread
@@ -107,6 +116,8 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
             iStream.close();
             urlConnection.disconnect();
         }
+
+        dialog.dismiss();
         return data;
     }
 
