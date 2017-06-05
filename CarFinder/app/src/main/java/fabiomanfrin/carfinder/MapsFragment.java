@@ -92,7 +92,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
 
         mMap = googleMap;
 
-
         /*if (location!=null){
             LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
@@ -118,9 +117,42 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
             loadParkings();
         }
 
-        setMarkerListener();
+        //setMarkerListener();
+        setInfoWindowListener();
 
 
+    }
+
+    public void setInfoWindowListener(){
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                LatLng position=marker.getPosition();
+                selectedLat=position.latitude;
+                selectedLng=position.longitude;
+                updatePath();
+            }
+        });
+    }
+
+    public void setInfoWindow(){
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v=getActivity().getLayoutInflater().inflate(R.layout.info_window,null);
+                TextView title= (TextView) getActivity().findViewById(R.id.titleMarker_text);
+                TextView draw= (TextView) getActivity().findViewById(R.id.startDraw_text);
+                title.setText(marker.getTitle());
+                draw.setText("draw path");
+
+                return v;
+            }
+        });
     }
 
     private void setMarkerListener() {
