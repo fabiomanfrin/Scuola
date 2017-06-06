@@ -181,11 +181,12 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                Log.d(TAG, "onChildRemoved: "+dataSnapshot.getKey());
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved: "+dataSnapshot.getKey());
 
             }
 
@@ -406,6 +407,15 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     public FirebaseAuth getAuth(){
         return mAuth;
+    }
+
+    public void removeParking(String title){
+        for(int i=0;i<car_parkings.size();i++){
+            if(car_parkings.get(i).getTitle().equals(title)){
+                car_parkings.remove(i);
+                break;
+            }
+        }
     }
 
 }

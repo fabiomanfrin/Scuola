@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.ArrayList;
 
 
@@ -27,6 +29,8 @@ public class ModifyFragment extends Fragment {
     private Button cancel;
     private Button modify;
     private Button remove;
+    private String UserId;
+    private DatabaseReference ref;
 
     public ModifyFragment() {
         // Required empty public constructor
@@ -47,6 +51,8 @@ public class ModifyFragment extends Fragment {
         Bundle b=getArguments();
         int position=b.getInt("position");
         p=car_parkings.get(position);
+        UserId=((Home)getActivity()).getAuth().getCurrentUser().getUid();
+        ref=((Home)getActivity()).getDB().child("Users").child(UserId).child("Parkings");
 
         initViewListener();
 
@@ -61,6 +67,14 @@ public class ModifyFragment extends Fragment {
 
         title.setText(p.getTitle());
         desc.setText(p.getDescription());
+
+        remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ref.child(p.getTitle()).removeValue();
+                ((Home)getActivity()).removeParking(p.getTitle());
+            }
+        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
