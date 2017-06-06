@@ -140,6 +140,34 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             loadParkings();
         }
 
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v=getActivity().getLayoutInflater().inflate(R.layout.infowindow,null);
+                TextView title= (TextView) v.findViewById(R.id.title_window);
+                TextView desc= (TextView) v.findViewById(R.id.description_window);
+                title.setText(marker.getTitle());
+                String d="";
+                for(int i=0;i<car_parkings.size();i++){
+                    if(car_parkings.get(i).getTitle().equals(marker.getTitle())){
+                        d=car_parkings.get(i).getDescription();
+                        break;
+                    }
+                }
+                desc.setText(d);
+
+
+                return v;
+
+            }
+        });
+
         //setMarkerListener();
         setInfoWindowListener();
 
@@ -198,14 +226,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
             mMap.clear();
-            if(!isPath) {
+           /* if(!isPath) {
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map
                         .zoom(18)                   // Sets the zoom
                         .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                         .build();                   // Creates a CameraPosition from the builder
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
+            }*/
             isPath=true;
             DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);
             // Start downloading json data from Google Directions API

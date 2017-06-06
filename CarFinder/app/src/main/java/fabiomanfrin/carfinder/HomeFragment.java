@@ -34,6 +34,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -448,6 +449,34 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if(car_parkings.size()!=0) {
             loadParkings();
         }
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v=getActivity().getLayoutInflater().inflate(R.layout.infowindow,null);
+                TextView title= (TextView) v.findViewById(R.id.title_window);
+                TextView desc= (TextView) v.findViewById(R.id.description_window);
+                title.setText(marker.getTitle());
+                String d="";
+                for(int i=0;i<car_parkings.size();i++){
+                    if(car_parkings.get(i).getTitle().equals(marker.getTitle())){
+                        d=car_parkings.get(i).getDescription();
+                        break;
+                    }
+                }
+                desc.setText(d);
+
+
+                return v;
+
+            }
+        });
 
     }
 
