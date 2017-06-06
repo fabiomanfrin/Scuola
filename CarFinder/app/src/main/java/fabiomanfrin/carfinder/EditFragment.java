@@ -45,6 +45,18 @@ public class EditFragment extends Fragment {
         lv.setAdapter(new ListviewAdapter(getActivity(), car_parkings));
         setItemListener(lv);
 
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ModifyFragment m=new ModifyFragment();
+                Bundle b=new Bundle();
+                b.putInt("position",position);
+                m.setArguments(b);
+                ((Home)getActivity()).replacefragment(m);
+
+            }
+        });
+
         return rootView;
     }
 

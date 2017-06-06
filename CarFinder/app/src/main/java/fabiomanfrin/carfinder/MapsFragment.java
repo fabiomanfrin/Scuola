@@ -2,6 +2,7 @@ package fabiomanfrin.carfinder;
 
 
 import android.*;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -9,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -19,11 +21,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,13 +40,13 @@ import static android.content.Context.LOCATION_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapsFragment extends Fragment implements OnMapReadyCallback{
+public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "myMAP";
     private MapFragment mapFragment;
     private GoogleMap mMap;
     private ArrayList<Parking> car_parkings;
-    
+
     //location variables
     private LocationListener locListener;
     private LocationManager locationManager;
@@ -51,6 +55,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
     private Location location;
     private Double selectedLat;
     private Double selectedLng;
+    private boolean isPath = false;
+    private static final int minTime = 5 * 1000;
+    private static final int minDistance = 50;
 
 
     public MapsFragment() {
@@ -69,14 +76,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initMap();
-        car_parkings=((Home)getActivity()).getListParkings();
+        car_parkings = ((Home) getActivity()).getListParkings();
         getLocation();
 
     }
 
     private void initMap() {
         if (mMap == null) {
-            mapFragment=(MapFragment) getChildFragmentManager().findFragmentById(R.id.map_full);
+            mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map_full);
             mapFragment.getMapAsync(this);
         }
     }
@@ -85,6 +92,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
     public void onPause() {
         super.onPause();
         locationManager.removeUpdates(locListener);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, minTime, minDistance, locListener);
     }
 
     @Override
@@ -175,6 +198,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
             String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
             mMap.clear();
+            if(!isPath) {
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map
+                        .zoom(18)                   // Sets the zoom
+                        .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+            isPath=true;
             DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
@@ -208,6 +240,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
                     TextView t= (TextView) getActivity().findViewById(R.id.coord_text);
                     t.setText(currentLocation.toString());
                     setLocation(location);
+                    if(isPath){
+                        updatePath();
+                    }
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -228,7 +263,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
 
                 }
             };
-            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 0, locListener);
+            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, minTime, minDistance, locListener);
         }
     }
 

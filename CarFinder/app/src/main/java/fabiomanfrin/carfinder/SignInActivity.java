@@ -79,13 +79,6 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        TextView skip=(TextView)findViewById(R.id.skip_text);
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SignInActivity.this,Home.class));
-            }
-        });
 
     }
 

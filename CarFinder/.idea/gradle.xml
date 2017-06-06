@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
+            <option value="/run/media/fabio/Storage/Scuola/Progetto/Scuola/CarFinder" />
+            <option value="/run/media/fabio/Storage/Scuola/Progetto/Scuola/CarFinder/app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
