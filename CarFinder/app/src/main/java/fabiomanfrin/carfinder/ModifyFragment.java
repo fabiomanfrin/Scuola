@@ -10,8 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
 
@@ -71,8 +76,22 @@ public class ModifyFragment extends Fragment {
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ref.child(p.getTitle()).removeValue();
-                ((Home)getActivity()).removeParking(p.getTitle());
+                ref.runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        mutableData.child(p.getTitle()).setValue(null);
+                        ((Home)getActivity()).removeParking(p.getTitle());
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                        Toast.makeText(getActivity(), "Parking removed", Toast.LENGTH_SHORT).show();
+                        ((Home)getActivity()).replacefragment(new EditFragment());
+                    }
+                });
+               /* ref.child(p.getTitle()).removeValue();
+                ((Home)getActivity()).removeParking(p.getTitle());*/
             }
         });
 

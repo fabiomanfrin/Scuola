@@ -4,6 +4,7 @@ package fabiomanfrin.carfinder;
 import android.*;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -149,7 +150,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
             @Override
             public View getInfoContents(Marker marker) {
-                View v=getActivity().getLayoutInflater().inflate(R.layout.infowindow,null);
+                View v=getActivity().getLayoutInflater().inflate(R.layout.infowindowfullmap,null);
                 TextView title= (TextView) v.findViewById(R.id.title_window);
                 TextView desc= (TextView) v.findViewById(R.id.description_window);
                 title.setText(marker.getTitle());
@@ -266,7 +267,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
                     TextView t= (TextView) getActivity().findViewById(R.id.coord_text);
-                    t.setText(currentLocation.toString());
+                    t.setText("location");
+                    t.setTextColor(Color.GREEN);
                     setLocation(location);
                     if(isPath){
                         updatePath();

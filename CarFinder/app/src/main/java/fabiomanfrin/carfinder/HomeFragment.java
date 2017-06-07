@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -128,9 +129,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            locationText.setText(currentLocation.toString());
-        } else {
-            locationText.setText("Searching for a location...");
         }
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.addParking_fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -578,7 +576,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     TextView t = (TextView) getActivity().findViewById(R.id.locationText);
-                    t.setText(currentLocation.toString());
+                    //t.setText(currentLocation.toString());
+                    t.setText("location");
+                    t.setTextColor(Color.GREEN);
                     setLocation(location);
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
