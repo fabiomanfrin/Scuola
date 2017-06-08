@@ -4,12 +4,15 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -76,6 +79,10 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
         // Invokes the thread for parsing the JSON data
         parserTask.execute(result);
+
+        Double distance=getDistanceInfo(result);
+        String duration=getDurationInfo(result);
+        Toast.makeText(h, "onPostExecute: "+distance+" "+duration, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -121,6 +128,62 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
         return data;
     }
 
+
+    private double getDistanceInfo(String result) {
+        Double dist = 0.0;
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            jsonObject = new JSONObject(result);
+
+            JSONArray array = jsonObject.getJSONArray("routes");
+
+            JSONObject routes = array.getJSONObject(0);
+
+            JSONArray legs = routes.getJSONArray("legs");
+
+            JSONObject steps = legs.getJSONObject(0);
+
+            JSONObject distance = steps.getJSONObject("distance");
+
+            Log.i("Distance", distance.toString());
+            dist = Double.parseDouble(distance.getString("text").replaceAll("[^\\.0123456789]","") );
+
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return dist;
+    }
+
+    private String getDurationInfo(String result) {
+        String dur = "";
+        JSONObject jsonObject = new JSONObject();
+        try {
+
+            jsonObject = new JSONObject(result);
+
+            JSONArray array = jsonObject.getJSONArray("routes");
+
+            JSONObject routes = array.getJSONObject(0);
+
+            JSONArray legs = routes.getJSONArray("legs");
+
+            JSONObject steps = legs.getJSONObject(0);
+
+            JSONObject distance = steps.getJSONObject("duration");
+
+            Log.i("Distance", distance.toString());
+            dur = distance.getString("text").replaceAll("[^\\.0123456789]","");
+
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return dur;
+    }
 
 
 }

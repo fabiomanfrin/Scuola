@@ -27,8 +27,7 @@ import java.util.List;
  */
 public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
-    private Fragment f;
-    private HomeFragment hf;
+    private Home h;
     private ArrayList<Parking> car_parkings;
     private String TAG="myTAG";
   /*  public ParserTask(Fragment f){
@@ -45,6 +44,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
     }*/
     public ParserTask(Home home,GoogleMap map){
         mMap=map;
+        h=home;
         car_parkings=home.getListParkings();
     }
 
@@ -87,7 +87,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
             // Fetching all the points in i-th route
             for (int j = 0; j < path.size(); j++) {
                 HashMap<String, String> point = path.get(j);
-
+            /*
                 if (j == 0) {    // Get distance from the list
                     distance = point.get("distance");
                     continue;
@@ -96,7 +96,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
                     continue;
                 }
-
+            */
 
 
                 double lat = Double.parseDouble(point.get("lat"));
@@ -143,5 +143,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         }
 
     }
+
+
 
 }

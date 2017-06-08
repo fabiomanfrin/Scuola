@@ -279,6 +279,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         urlString.append("&sensor=false&mode=walking&alternatives=true");
         String apiKey="AIzaSyDcRarWNqsbymt_SHnfwQceOrlOeJq7U1g";
         urlString.append("&key="+apiKey);
+        Log.d(TAG, "makeURL: "+urlString.toString());
         return urlString.toString();
     }
 
