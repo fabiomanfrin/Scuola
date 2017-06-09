@@ -614,7 +614,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
             mMap.clear();
-            DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);
+            DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap,this);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
 

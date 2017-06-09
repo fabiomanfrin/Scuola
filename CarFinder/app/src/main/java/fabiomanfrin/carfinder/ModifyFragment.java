@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +30,8 @@ public class ModifyFragment extends Fragment {
 
     private ArrayList<Parking> car_parkings;
     private Parking p;
-    private TextView title;
-    private TextView desc;
+    private EditText title;
+    private EditText desc;
     private Button cancel;
     private Button modify;
     private Button remove;
@@ -64,8 +65,8 @@ public class ModifyFragment extends Fragment {
     }
 
     private void initViewListener() {
-        title= (TextView) getActivity().findViewById(R.id.title_text);
-        desc= (TextView) getActivity().findViewById(R.id.description_text);
+        title= (EditText) getActivity().findViewById(R.id.editTitle_text);
+        desc= (EditText) getActivity().findViewById(R.id.editDescription_text);
         cancel= (Button) getActivity().findViewById(R.id.cancelModify_button);
         remove= (Button) getActivity().findViewById(R.id.remove_button);
         modify= (Button) getActivity().findViewById(R.id.modify_button);
@@ -99,6 +100,24 @@ public class ModifyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((Home)getActivity()).replacefragment(new EditFragment());
+            }
+        });
+
+        modify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString())){
+                    ((Home)getActivity()).replacefragment(new EditFragment());
+                }
+                else if(!p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString())){
+                    Toast.makeText(getActivity(), "Title changed", Toast.LENGTH_SHORT).show();
+                }
+                else if(p.getTitle().equals(title.getText().toString()) && !p.getDescription().equals(desc.getText().toString())){
+                    Toast.makeText(getActivity(), "Description changed", Toast.LENGTH_SHORT).show();
+                }
+                else if(!p.getTitle().equals(title.getText().toString()) && !p.getDescription().equals(desc.getText().toString())){
+                    Toast.makeText(getActivity(), "Title changed and desc changed", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

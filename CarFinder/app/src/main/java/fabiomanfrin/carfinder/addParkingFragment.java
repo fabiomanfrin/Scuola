@@ -2,6 +2,7 @@ package fabiomanfrin.carfinder;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +26,8 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +36,7 @@ public class addParkingFragment extends Fragment {
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private ArrayList<Parking> car_parkings;
     private static final String TAG="myTAG";
 
     public addParkingFragment() {
@@ -73,31 +78,42 @@ public class addParkingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText().toString());
-                Log.d(TAG, "onClick: parking added");
-                DatabaseReference ref=mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString());
-                ref.runTransaction(new Transaction.Handler() {
-                    @Override
-                    public Transaction.Result doTransaction(MutableData mutableData) {
-                        mutableData.child("Description").setValue(description.getText()+"");
-                        mutableData.child("Coordinates").child("Lat").setValue(lat);
-                        mutableData.child("Coordinates").child("Lng").setValue(lng);
-                        //return null;
-                        return Transaction.success(mutableData);
-                    }
 
-                    @Override
-                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                        ((Home)getActivity()).replacefragment(new HomeFragment());
-                    }
-                });
-               // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText()+"");
-               // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
-               // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
+                if(car_parkings!=null) {
+                    if(!titleAlreadyExists(title.getText().toString())) {
+                        Log.d(TAG, "onClick: parking added");
+                        DatabaseReference ref = mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString());
+                        ref.runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                mutableData.child("Description").setValue(description.getText() + "");
+                                mutableData.child("Coordinates").child("Lat").setValue(lat);
+                                mutableData.child("Coordinates").child("Lng").setValue(lng);
+                                //return null;
+                                return Transaction.success(mutableData);
+                            }
 
-                //((Home)getActivity()).replacefragment(new HomeFragment());
-                //Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                ((Home) getActivity()).replacefragment(new HomeFragment());
+                            }
+                        });
+                        // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText()+"");
+                        // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
+                        // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
+
+                        //((Home)getActivity()).replacefragment(new HomeFragment());
+                        //Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        title.setTextColor(Color.RED);
+                        Toast.makeText(getActivity(), "Name already exists", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             }
         });
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,5 +124,22 @@ public class addParkingFragment extends Fragment {
 
 
 
+    }
+
+    private boolean titleAlreadyExists(String s) {
+        boolean exists=false;
+        for(Parking p:car_parkings){
+            if(p.getTitle().equals(s)){
+                exists=true;
+                break;
+            }
+        }
+        return exists;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        car_parkings=((Home)getActivity()).getListParkings();
     }
 }

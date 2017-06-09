@@ -236,7 +236,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }*/
             isPath=true;
-            DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap);
+            DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap,this);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
 

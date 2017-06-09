@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -32,16 +33,29 @@ import java.util.List;
 public class DownloadTask extends AsyncTask<String, Void, String> {
 
     String TAG="download";
-    Fragment f;
+    private HomeFragment hf;
+    private MapsFragment mf;
     private Home h;
     private GoogleMap mMap;
     private ProgressDialogFragment dialog;
+    private String Distance;
+    private String Duration;
     /*public DownloadTask(Fragment f){
         this.f=f;
     }*/
     public DownloadTask(Home home,GoogleMap map){
         mMap=map;
         h=home;
+    }
+    public DownloadTask(Home home,GoogleMap map,HomeFragment hf){
+        h=home;
+        mMap=map;
+        this.hf=hf;
+    }
+    public DownloadTask(Home home,GoogleMap map,MapsFragment mf){
+        h=home;
+        mMap=map;
+        this.mf=mf;
     }
 
     @Override
@@ -79,10 +93,8 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
         // Invokes the thread for parsing the JSON data
         parserTask.execute(result);
+        getPathInfo(result);
 
-        Double distance=getDistanceInfo(result);
-        String duration=getDurationInfo(result);
-        Toast.makeText(h, "onPostExecute: "+distance+" "+duration, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -129,60 +141,37 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
     }
 
 
-    private double getDistanceInfo(String result) {
-        Double dist = 0.0;
-        JSONObject jsonObject = new JSONObject();
-        try {
-
-            jsonObject = new JSONObject(result);
-
-            JSONArray array = jsonObject.getJSONArray("routes");
-
-            JSONObject routes = array.getJSONObject(0);
-
-            JSONArray legs = routes.getJSONArray("legs");
-
-            JSONObject steps = legs.getJSONObject(0);
-
-            JSONObject distance = steps.getJSONObject("distance");
-
-            Log.i("Distance", distance.toString());
-            dist = Double.parseDouble(distance.getString("text").replaceAll("[^\\.0123456789]","") );
-
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return dist;
-    }
-
-    private String getDurationInfo(String result) {
+    private void getPathInfo(String result) {
         String dur = "";
+        String dis = "";
         JSONObject jsonObject = new JSONObject();
         try {
-
             jsonObject = new JSONObject(result);
-
             JSONArray array = jsonObject.getJSONArray("routes");
-
             JSONObject routes = array.getJSONObject(0);
-
             JSONArray legs = routes.getJSONArray("legs");
-
             JSONObject steps = legs.getJSONObject(0);
+            JSONObject distance = steps.getJSONObject("distance");
+            JSONObject duration = steps.getJSONObject("duration");
+            dis= distance.getString("text");
+            dur = duration.getString("text");
+            Distance=dis;
+            Duration=dur;
 
-            JSONObject distance = steps.getJSONObject("duration");
-
-            Log.i("Distance", distance.toString());
-            dur = distance.getString("text").replaceAll("[^\\.0123456789]","");
+            if(hf!=null){
+                TextView t= (TextView) hf.getActivity().findViewById(R.id.infoPath_text);
+                t.setText(Duration+", "+Distance);
+            }else if(mf!=null){
+                TextView t= (TextView) mf.getActivity().findViewById(R.id.infoPathMaps_text);
+                t.setText(Duration+", "+Distance);
+            }
 
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        return dur;
+
     }
 
 
