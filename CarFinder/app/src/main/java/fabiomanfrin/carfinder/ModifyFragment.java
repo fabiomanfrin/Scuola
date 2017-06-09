@@ -42,6 +42,7 @@ public class ModifyFragment extends Fragment {
     private FloatingActionButton map_button;
     private String UserId;
     private DatabaseReference ref;
+    private LatLng modifiedCoord;
 
     public ModifyFragment() {
         // Required empty public constructor
@@ -125,18 +126,40 @@ public class ModifyFragment extends Fragment {
         modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString())){
+                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString()) && modifiedCoord==null){  //niente cambia
                     ((Home)getActivity()).replacefragment(new EditFragment());
                 }
-                else if(!p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString())){
+                else {
                     Toast.makeText(getActivity(), "Title changed", Toast.LENGTH_SHORT).show();
+
+                    ref.runTransaction(new Transaction.Handler() {
+                        @Override
+                        public Transaction.Result doTransaction(MutableData mutableData) {
+                            if(!p.getTitle().equals(title.getText().toString())) {
+                                mutableData.child(p.getTitle()).setValue(null);
+                                ((Home) getActivity()).removeParking(p.getTitle());
+                            }
+                            mutableData.child(title.getText().toString()).child("Description").setValue(desc.getText().toString());
+                            if(modifiedCoord!=null) {
+                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lat").setValue(modifiedCoord.latitude);
+                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lng").setValue(modifiedCoord.longitude);
+                            }
+                            else{
+                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lat").setValue(p.getCoordinates().getLat());
+                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lng").setValue(p.getCoordinates().getLng());
+                            }
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                            Toast.makeText(getActivity(), "Parking modified", Toast.LENGTH_SHORT).show();
+                            ((Home)getActivity()).replacefragment(new EditFragment());
+                        }
+                    });
+
                 }
-                else if(p.getTitle().equals(title.getText().toString()) && !p.getDescription().equals(desc.getText().toString())){
-                    Toast.makeText(getActivity(), "Description changed", Toast.LENGTH_SHORT).show();
-                }
-                else if(!p.getTitle().equals(title.getText().toString()) && !p.getDescription().equals(desc.getText().toString())){
-                    Toast.makeText(getActivity(), "Title changed and desc changed", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
     }
@@ -153,6 +176,9 @@ public class ModifyFragment extends Fragment {
                 // The Intent's data Uri identifies which contact was selected.
 
                 // Do something with the contact here (bigger example below)
+                Bundle bundle=data.getExtras();
+                modifiedCoord=new LatLng(bundle.getDouble("lat"),bundle.getDouble("lng"));
+                Toast.makeText(getActivity(), modifiedCoord.toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }
