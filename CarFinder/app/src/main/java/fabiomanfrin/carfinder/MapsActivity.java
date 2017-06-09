@@ -12,12 +12,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Double latMarker;
+    private Double lngMarker;
+    private String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Bundle b=getIntent().getExtras();
+        latMarker=b.getDouble("lat");
+        lngMarker=b.getDouble("lng");
+        title=b.getString("title");
     }
 
 
@@ -43,16 +52,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(51.5, -0.1);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.addPolyline(new PolylineOptions().add(new LatLng(51.5, -0.1), new LatLng(40.7, -74.0))
-                .width(5)
-                .color(Color.BLUE));
+        LatLng position = new LatLng(latMarker, lngMarker);
+        Marker m= mMap.addMarker(new MarkerOptions().position(position).title(title));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latMarker, lngMarker), 15));
+        m.setDraggable(true);
     }
 
-    @Override
-    public void onBackPressed() {
-        MapsActivity.this.finish();
-    }
 }

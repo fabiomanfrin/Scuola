@@ -1,9 +1,11 @@
 package fabiomanfrin.carfinder;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 public class ModifyFragment extends Fragment {
 
 
+    private static final int MAP_CODE =101;
     private ArrayList<Parking> car_parkings;
     private Parking p;
     private EditText title;
@@ -35,6 +39,7 @@ public class ModifyFragment extends Fragment {
     private Button cancel;
     private Button modify;
     private Button remove;
+    private FloatingActionButton map_button;
     private String UserId;
     private DatabaseReference ref;
 
@@ -70,9 +75,23 @@ public class ModifyFragment extends Fragment {
         cancel= (Button) getActivity().findViewById(R.id.cancelModify_button);
         remove= (Button) getActivity().findViewById(R.id.remove_button);
         modify= (Button) getActivity().findViewById(R.id.modify_button);
+        map_button= (FloatingActionButton) getActivity().findViewById(R.id.map_fab);
 
         title.setText(p.getTitle());
         desc.setText(p.getDescription());
+
+        map_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle b=new Bundle();
+                b.putDouble("lat",p.getLat());
+                b.putDouble("lng",p.getLng());
+                b.putString("title",p.getTitle());
+                Intent i=new Intent(getActivity(),MapsActivity.class);
+                i.putExtras(b);
+                startActivityForResult(i,MAP_CODE);
+            }
+        });
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,5 +139,21 @@ public class ModifyFragment extends Fragment {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check which request we're responding to
+        if (requestCode == MAP_CODE) {
+            // Make sure the request was successful
+            if (resultCode == getActivity().RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
     }
 }
