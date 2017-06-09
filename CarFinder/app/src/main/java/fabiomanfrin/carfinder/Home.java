@@ -419,4 +419,15 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         }
     }
 
+    public void updateParking(String title, String Description, Double lat,Double lng){
+        for(int i=0;i<car_parkings.size();i++){
+            if(car_parkings.get(i).getTitle().equals(title)){
+                car_parkings.remove(i);
+                car_parkings.add(new Parking(title,lat,lng,Description));
+                break;
+            }
+        }
+
+    }
+
 }

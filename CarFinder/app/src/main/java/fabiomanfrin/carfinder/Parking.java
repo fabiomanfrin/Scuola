@@ -43,7 +43,7 @@ public class Parking {
         return description;
     }
 
-    public class Coordinates {
+    private class Coordinates {
         private Double Lat;
         private Double Lng;
 

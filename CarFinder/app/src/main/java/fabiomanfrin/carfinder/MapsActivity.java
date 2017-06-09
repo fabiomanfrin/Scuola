@@ -63,7 +63,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latMarker, lngMarker), 15));
         m.setDraggable(true);
-        
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
 
 
         agree_fab.setOnClickListener(new View.OnClickListener() {

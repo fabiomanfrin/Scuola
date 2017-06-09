@@ -81,6 +81,8 @@ public class ModifyFragment extends Fragment {
         title.setText(p.getTitle());
         desc.setText(p.getDescription());
 
+        modifiedCoord=new LatLng(p.getLat(),p.getLat());
+
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,28 +128,25 @@ public class ModifyFragment extends Fragment {
         modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString()) && modifiedCoord==null){  //niente cambia
+                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString()) && modifiedCoord.latitude==p.getLat() &&
+                        modifiedCoord.longitude == p.getLng()){  //niente cambia
                     ((Home)getActivity()).replacefragment(new EditFragment());
                 }
                 else {
-                    Toast.makeText(getActivity(), "Title changed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "Title changed", Toast.LENGTH_SHORT).show();
 
                     ref.runTransaction(new Transaction.Handler() {
                         @Override
                         public Transaction.Result doTransaction(MutableData mutableData) {
                             if(!p.getTitle().equals(title.getText().toString())) {
                                 mutableData.child(p.getTitle()).setValue(null);
-                                ((Home) getActivity()).removeParking(p.getTitle());
+                                //((Home) getActivity()).removeParking(p.getTitle());
                             }
+                            ((Home)getActivity()).updateParking(title.getText().toString(),desc.getText().toString(),modifiedCoord.latitude,modifiedCoord.longitude);
                             mutableData.child(title.getText().toString()).child("Description").setValue(desc.getText().toString());
-                            if(modifiedCoord!=null) {
-                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lat").setValue(modifiedCoord.latitude);
-                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lng").setValue(modifiedCoord.longitude);
-                            }
-                            else{
-                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lat").setValue(p.getCoordinates().getLat());
-                                mutableData.child(title.getText().toString()).child("Coordinates").child("Lng").setValue(p.getCoordinates().getLng());
-                            }
+                            mutableData.child(title.getText().toString()).child("Coordinates").child("Lat").setValue(modifiedCoord.latitude);
+                            mutableData.child(title.getText().toString()).child("Coordinates").child("Lng").setValue(modifiedCoord.longitude);
+
                             return Transaction.success(mutableData);
                         }
 
