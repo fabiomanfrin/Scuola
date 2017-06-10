@@ -160,10 +160,10 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
             if(hf!=null){
                 TextView t= (TextView) hf.getActivity().findViewById(R.id.infoPath_text);
-                t.setText(Duration+", "+Distance);
+                t.setText(Duration+", "+Distance+" WALKING");
             }else if(mf!=null){
                 TextView t= (TextView) mf.getActivity().findViewById(R.id.infoPathMaps_text);
-                t.setText(Duration+", "+Distance);
+                t.setText(Duration+", "+Distance+" WALKING");
             }
 
         } catch (JSONException e) {

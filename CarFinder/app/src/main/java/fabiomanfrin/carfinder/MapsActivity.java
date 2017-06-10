@@ -1,8 +1,10 @@
 package fabiomanfrin.carfinder;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -35,12 +37,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        agree_fab= (FloatingActionButton) findViewById(R.id.agree_fab);
+        agree_fab = (FloatingActionButton) findViewById(R.id.agree_fab);
 
-        Bundle b=getIntent().getExtras();
-        latMarker=b.getDouble("lat");
-        lngMarker=b.getDouble("lng");
-        title=b.getString("title");
+        Bundle b = getIntent().getExtras();
+        latMarker = b.getDouble("lat");
+        lngMarker = b.getDouble("lng");
+        title = b.getString("title");
     }
 
 
@@ -59,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney and move the camera
         LatLng position = new LatLng(latMarker, lngMarker);
-        final Marker m= mMap.addMarker(new MarkerOptions().position(position).title(title));
+        final Marker m = mMap.addMarker(new MarkerOptions().position(position).title(title));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latMarker, lngMarker), 15));
         m.setDraggable(true);
@@ -84,9 +86,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent i = new Intent();
-                Bundle coord=new Bundle();
-                coord.putDouble("lat",m.getPosition().latitude);
-                coord.putDouble("lng",m.getPosition().longitude);
+                Bundle coord = new Bundle();
+                coord.putDouble("lat", m.getPosition().latitude);
+                coord.putDouble("lng", m.getPosition().longitude);
                 i.putExtras(coord);
                 MapsActivity.this.setResult(RESULT_OK, i);
                 MapsActivity.this.finish();
@@ -94,7 +96,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override

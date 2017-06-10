@@ -177,7 +177,7 @@ public class ModifyFragment extends Fragment {
                 // Do something with the contact here (bigger example below)
                 Bundle bundle=data.getExtras();
                 modifiedCoord=new LatLng(bundle.getDouble("lat"),bundle.getDouble("lng"));
-                Toast.makeText(getActivity(), modifiedCoord.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), modifiedCoord.toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }
