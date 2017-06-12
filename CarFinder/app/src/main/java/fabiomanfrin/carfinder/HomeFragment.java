@@ -26,8 +26,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -575,10 +577,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 public void onLocationChanged(Location location) {
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    TextView t = (TextView) getActivity().findViewById(R.id.locationText);
-                    //t.setText(currentLocation.toString());
-                    t.setText("location");
-                    t.setTextColor(Color.GREEN);
+                    ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
+                    locIcon.setColorFilter(Color.GREEN);
                     setLocation(location);
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));

@@ -117,7 +117,7 @@ public class addParkingFragment extends Fragment {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "cancel", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "cancel", Toast.LENGTH_SHORT).show();
                 ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });

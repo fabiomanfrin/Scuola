@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -266,9 +267,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 public void onLocationChanged(Location location) {
 
                     LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
-                    TextView t= (TextView) getActivity().findViewById(R.id.coord_text);
-                    t.setText("location");
-                    t.setTextColor(Color.GREEN);
+                    ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
+                    locIcon.setColorFilter(Color.GREEN);
                     setLocation(location);
                     if(isPath){
                         updatePath();
