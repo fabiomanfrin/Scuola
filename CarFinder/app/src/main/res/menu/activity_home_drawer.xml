@@ -19,6 +19,11 @@
             android:icon="@drawable/ic_map_black_24dp"
             android:title="Map" />
         <item
+            android:id="@+id/notes_menu"
+
+            android:icon="@drawable/ic_lock_outline_black_24dp"
+            android:title="Notes" />
+        <item
             android:id="@+id/info_menu"
 
             android:icon="@drawable/ic_info_outline_black_24dp"
