@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     String TAG = "myHFragment";
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime =1 * 30 * 1000; //30 seconds
+    private long minTime =1 * 10 * 1000; //30 seconds
     private float minDistance = 25;   //25 meters
     private Spinner spinner;
 

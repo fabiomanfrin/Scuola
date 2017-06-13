@@ -30,22 +30,21 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
     private Home h;
     private ArrayList<Parking> car_parkings;
     private String TAG="myTAG";
-  /*  public ParserTask(Fragment f){
-        this.f=f;
-        hf=(HomeFragment)f;
-        mMap=hf.getMap();
-        car_parkings=hf.getCarParkings();
-
-
-    }*/
+    private ProgressDialogFragment dialog;
     private GoogleMap mMap;
-    /*public DownloadTask(Fragment f){
-        this.f=f;
-    }*/
+
     public ParserTask(Home home,GoogleMap map){
         mMap=map;
         h=home;
         car_parkings=home.getListParkings();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        dialog=new ProgressDialogFragment();
+        dialog.show(h.getFragmentManager(),"TAG");
+
     }
 
     // Parsing the data in non-ui thread
@@ -109,7 +108,8 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
             lineOptions.width(10);
-            lineOptions.color(Color.CYAN);
+            lineOptions.color(Color.BLUE);
+
         }
 
 
@@ -120,6 +120,7 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
         mMap.addPolyline(lineOptions);
         loadParkings();
+        dialog.dismiss();
     }
 
     private void loadParkings(){

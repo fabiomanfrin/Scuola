@@ -58,8 +58,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private boolean isPath = false;
-    private static final int minTime = 5 * 1000;
-    private static final int minDistance = 50;
+    private long minTime =1 * 10 * 1000; //30 seconds
+    private float minDistance = 25;   //25 meters
 
 
     public MapsFragment() {

@@ -381,13 +381,12 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                 break;
             case R.id.map_full:
                 replacefragment(new MapsFragment());
-                //Intent map_full=new Intent(Home.this,MapsActivity.class);
-                //startActivity(map_full);
                 break;
             case R.id.notes_menu:
                 replacefragment(new NotesFragment());
                 break;
             case R.id.info_menu:
+                replacefragment(new InfoFragment());
                 break;
             case R.id.logout:
                 mAuth.signOut();

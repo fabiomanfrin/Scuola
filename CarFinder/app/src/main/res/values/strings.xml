@@ -10,4 +10,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_text"> Sign in with google to keep your car parking with you...</string>
+    <string name="info_text">
+        \tBuild 1.0\n
+        \n
+        \tCreator: Fabio Manfrin\n
+        \n
+        \tProgetto di maturità 2017\n
+        \n
+        \tDatabase: Google Firebase Database\n
+        \n
+        \tDatabase type: OODB(Object Oriented Database)\n
+        \n
+        \tMaps: Google Maps &amp; Directions from Google api\n
+        \n
+        \tApp developed for Android 6.0+</string>
 </resources>

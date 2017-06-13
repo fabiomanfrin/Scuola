@@ -81,7 +81,7 @@ public class ModifyFragment extends Fragment {
         title.setText(p.getTitle());
         desc.setText(p.getDescription());
 
-        modifiedCoord=new LatLng(p.getLat(),p.getLat());
+        modifiedCoord=new LatLng(p.getLat(),p.getLng());
 
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,8 +128,7 @@ public class ModifyFragment extends Fragment {
         modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString()) && modifiedCoord.latitude==p.getLat() &&
-                        modifiedCoord.longitude == p.getLng()){  //niente cambia
+                if(p.getTitle().equals(title.getText().toString()) && p.getDescription().equals(desc.getText().toString()) && modifiedCoord.latitude==p.getLat() && modifiedCoord.longitude == p.getLng()){  //niente cambia
                     ((Home)getActivity()).replacefragment(new EditFragment());
                 }
                 else {
