@@ -21,6 +21,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -82,6 +84,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private ArrayAdapter<String> arrayAdapter;
     private TextView descriptionText;
 
+    //view
+    private boolean isSpinnerTouched = false;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -117,13 +122,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         arrayAdapter= new ArrayAdapter<String>(getContext(),R.layout.spinner_item, spinnerItem);
         spinner.setAdapter(arrayAdapter);
         beginAuth();
-        locationText = (TextView) getActivity().findViewById(R.id.locationText);
+        //locationText = (TextView) getActivity().findViewById(R.id.locationText);
         startLocationUpdates();
         //getLocation();
         initMap();
 
 
-        Button b = (Button) getActivity().findViewById(R.id.refresh_button);
+        //Button b = (Button) getActivity().findViewById(R.id.refresh_button);
 
 
 
@@ -132,36 +137,29 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         }
-        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.addParking_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle b = new Bundle();
-                if (location == null) {
-                    //Toast.makeText(getContext(), "Unable to add a new car parking cause current location missing", Toast.LENGTH_SHORT).show();
-                    Snackbar.make(view, "Unable to add a new car parking cause current location missing", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+       Button add_button= (Button) getActivity().findViewById(R.id.addParking_button);
+       add_button.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Bundle b = new Bundle();
+               if (location == null) {
+                   //Toast.makeText(getContext(), "Unable to add a new car parking cause current location missing", Toast.LENGTH_SHORT).show();
+                   Snackbar.make(v, "Unable to add a new car parking cause current location missing", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
-                } else {
-                    b.putDouble("lat", location.getLatitude());
-                    b.putDouble("lng", location.getLongitude());
-                    addParkingFragment ap = new addParkingFragment();
-                    ap.setArguments(b);
-                    ((Home) getActivity()).replacefragment(ap);  // replace fragment in fragment layout with a addParking Fragment
+               } else {
+                   b.putDouble("lat", location.getLatitude());
+                   b.putDouble("lng", location.getLongitude());
+                   addParkingFragment ap = new addParkingFragment();
+                   ap.setArguments(b);
+                   ((Home) getActivity()).replacefragment(ap);  // replace fragment in fragment layout with a addParking Fragment
 
-                }
+               }
+           }
+       });
 
-            }
-        });
 
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                 Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
-
-        FloatingActionButton drawPath_fab = (FloatingActionButton) getActivity().findViewById(R.id.drawPath_fab);
-        drawPath_fab.setOnClickListener(new View.OnClickListener() {
+        Button path_button= (Button) getActivity().findViewById(R.id.path_button);
+        path_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(spinnerItem.size()!=0 && selectedLat!=null && selectedLng!=null) {
@@ -170,25 +168,50 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
+
+
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedP=spinner.getSelectedItem().toString();
-                Log.d(TAG, "onItemSelected: "+selectedP);
-                Parking p;
-                for (Parking parking:car_parkings){
 
-                    if(parking.getTitle().equals(selectedP)){
-                        p=parking;
-                        selectedLat=p.getLat();
-                        selectedLng=p.getLng();
-                        String description=p.getDescription();
-                        String subDes=description.length()<50?description:description.substring(0,49)+"...";
-                        descriptionText.setText(subDes);
-                        break;
+
+                    String selectedP = spinner.getSelectedItem().toString();
+                    Log.d(TAG, "onItemSelected: " + selectedP);
+                    Parking p;
+                    for (Parking parking : car_parkings) {
+
+                        if (parking.getTitle().equals(selectedP)) {
+                            p = parking;
+
+                            selectedLat = p.getLat();
+                            selectedLng = p.getLng();
+                            LatLng selectedLatLng = new LatLng(selectedLat, selectedLng);
+                           // mMap.moveCamera(CameraUpdateFactory.newLatLng(selected));
+                           // mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(selectedLatLng)
+                                    .zoom(15)                   // Sets the zoom
+                                    .build();                   // Creates a CameraPosition from the builder
+                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+
+
+
+
+                            String description = p.getDescription();
+                            String subDes = description.length() < 50 ? description : description.substring(0, 49) + "...";
+                            descriptionText.setText(subDes);
+                            break;
+                        }
+
                     }
 
-                }
+
+
+
 
             }
 
@@ -210,7 +233,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if(mAuth.getCurrentUser()!= null) { 
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
-            mDatabase = ((Home) getActivity()).getDB();
+            mDatabase = ((Home) getActivity()).getDB().child("Users").child(userId).child("Parkings");
 
 
             mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -343,35 +366,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-
-    private void getParkings(Map<String,Object> parkings) {
-
-        for (Map.Entry<String, Object> entry : parkings.entrySet()){
-
-            Map singleParking = (Map) entry.getValue();
-            Object description=singleParking.get("Description");
-            Map coordinates=(Map)singleParking.get("Coordinates");
-            String title=entry.getKey();
-
-            if(coordinates==null || description==null){
-                Log.d(TAG, "getParkings: coordinates or description null");
-            }
-
-            else if(coordinates.get("Lat")!=null && coordinates.get("Lng")!=null) {
-                Log.d(TAG, "description: "+description);
-                car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()),description.toString()));
-            }
-            spinnerItem.add(title);
-            Log.d(TAG, "getParkings: entarto quiiiiiiiiii1212121212121");
-
-
-        }
-
-
-
-
-
-    }
 
     private void loadParkings() {
 
@@ -578,7 +572,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
-                    locIcon.setColorFilter(Color.GREEN);
+                    //locIcon.setColorFilter(R.color.green);
+                    locIcon.setVisibility(View.VISIBLE);
                     setLocation(location);
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));

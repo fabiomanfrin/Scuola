@@ -5,6 +5,7 @@ import android.*;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -58,7 +59,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private boolean isPath = false;
-    private long minTime =1 * 10 * 1000; //30 seconds
+    private long minTime =1 * 10 * 1000; //10 seconds
     private float minDistance = 25;   //25 meters
 
 
@@ -268,7 +269,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
                     ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
-                    locIcon.setColorFilter(Color.GREEN);
+                    //locIcon.setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
+                    locIcon.setVisibility(View.VISIBLE);
                     setLocation(location);
                     if(isPath){
                         updatePath();

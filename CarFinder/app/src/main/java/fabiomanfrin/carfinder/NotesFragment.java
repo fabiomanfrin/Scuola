@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -64,8 +66,8 @@ public class NotesFragment extends Fragment {
        /* DatabaseReference noteRef = ref.child("Users").child(userID).child("Notes").push();
         noteRef.setValue("Robetto");*/
 
-        ToggleButton removeToggle= (ToggleButton) getActivity().findViewById(R.id.remove_toggle);
-        removeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        CheckBox removeCheck= (CheckBox) getActivity().findViewById(R.id.remove_checkBox);
+        removeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -75,6 +77,8 @@ public class NotesFragment extends Fragment {
                 }
             }
         });
+
+
 
         ListView l= (ListView) getActivity().findViewById(R.id.listView);
         final ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(getActivity(),R.layout.item_list, notes); // android.R.layout.simple_list_item_1
@@ -119,8 +123,9 @@ public class NotesFragment extends Fragment {
         });
 
 
-        FloatingActionButton add= (FloatingActionButton) getActivity().findViewById(R.id.addNote_fab);
-        add.setOnClickListener(new View.OnClickListener() {
+
+        Button add_note= (Button) getActivity().findViewById(R.id.addNote_button);
+        add_note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((Home)getActivity()).replacefragment(new addNoteFragment());

@@ -188,6 +188,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onChildRemoved: "+dataSnapshot.getKey());
 
+
             }
 
             @Override
