@@ -49,6 +49,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private MapFragment mapFragment;
     private GoogleMap mMap;
     private ArrayList<Parking> car_parkings;
+    private ArrayList<ParkingsPlace> listParkings;
 
     //location variables
     private LocationListener locListener;
@@ -80,6 +81,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
         initMap();
         car_parkings = ((Home) getActivity()).getListParkings();
+        listParkings = ((Home) getActivity()).getListParkingsPlace();
         getLocation();
 
     }
@@ -142,6 +144,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         if (car_parkings.size() != 0) {
             loadParkings();
         }
+        if(listParkings.size()!=0){
+            loadParkingsPlace();
+        }
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -160,6 +165,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 for (int i = 0; i < car_parkings.size(); i++) {
                     if (car_parkings.get(i).getTitle().equals(marker.getTitle())) {
                         d = car_parkings.get(i).getDescription();
+                        break;
+                    }
+                }
+                for (int i = 0; i < listParkings.size(); i++) {
+                    if (listParkings.get(i).getTitle().equals(marker.getTitle())) {
+                        d = listParkings.get(i).getDescription();
                         break;
                     }
                 }
@@ -221,6 +232,31 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
             Log.d(TAG, "load parkings: " + title + myLatLng.toString());
+        }
+    }
+
+    private void loadParkingsPlace() {
+        Log.d(TAG, "loadParkingsPlace: dentro place");
+        Double Lat;
+        Double Lng;
+        String title;
+        for (int i = 0; i < listParkings.size(); i++) {
+            Log.d(TAG, "loadParkingsPlace: dentro for place");
+            title = listParkings.get(i).getTitle();
+            String coord = listParkings.get(i).getCoordinates();
+            String[] parts = coord.split(",");
+            String part1 = parts[0];
+            String part2 = parts[1];
+            Lat = Double.parseDouble(part1);
+            Lng = Double.parseDouble(part2);
+            LatLng myLatLng = new LatLng(Lat, Lng);
+            // Toast.makeText(getActivity(),myLatLng.toString(), Toast.LENGTH_SHORT).show();
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLatLng)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_local_parking_black_24dp))
+            );
+            //Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
         }
     }
 

@@ -194,7 +194,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                             CameraPosition cameraPosition = new CameraPosition.Builder()
                                     .target(selectedLatLng)
-                                    .zoom(15)                   // Sets the zoom
+                                    .zoom(13)                   // Sets the zoom
                                     .build();                   // Creates a CameraPosition from the builder
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -234,7 +234,53 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if(mAuth.getCurrentUser()!= null) { 
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
-            mDatabase = ((Home) getActivity()).getDB().child("Users").child(userId).child("Parkings");
+
+
+            mDatabase = ((Home) getActivity()).getDB().child("Users");
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final DataSnapshot parkingsSnap=dataSnapshot.child(userId).child("Parkings");
+                    if(parkingsSnap.getValue()==null) {
+                        spinnerItem.add("No car parkings available");
+                        arrayAdapter.notifyDataSetChanged();
+                        Log.d(TAG, " torna null0");
+                    }
+                    else{
+                        Log.d(TAG, " sto per fare getParkings");
+                        for (Parking p : car_parkings) {
+                            spinnerItem.add(p.getTitle());
+                        }
+
+                        if (mMap != null) {
+                            loadParkings();
+
+                        }
+
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
+
+                    final DataSnapshot parkingsPlaceSnap=dataSnapshot.child("ParkingsPlace");
+                    if(parkingsPlaceSnap.getValue()!=null) {
+                        listParkings=((Home)getActivity()).getListParkingsPlace();
+                        if (mMap != null) {
+                            loadParkingsPlace();
+                        }
+                    }
+
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+        /*    mDatabase = ((Home) getActivity()).getDB().child("Users").child(userId).child("Parkings");
             mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -288,8 +334,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
-            });
+            });*/
 
+
+
+
+            /////////////////////////////////
 
 
           /*  mDatabase.addValueEventListener(new ValueEventListener() {
@@ -426,7 +476,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Lat = Double.parseDouble(part1);
             Lng = Double.parseDouble(part2);
             LatLng myLatLng = new LatLng(Lat, Lng);
-            Toast.makeText(getActivity(),myLatLng.toString(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getActivity(),myLatLng.toString(), Toast.LENGTH_SHORT).show();
             mMap.addMarker(new MarkerOptions()
                     .position(myLatLng)
                     .title(title)
@@ -473,7 +523,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if (location!=null){
             LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(13));
         }
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;

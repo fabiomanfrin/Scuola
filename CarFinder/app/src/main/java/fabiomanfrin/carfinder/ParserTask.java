@@ -131,7 +131,6 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
                 )
                 .target(points.get(points.size() / 3))
                 .zoom(13)
-                .tilt(30)
                 .build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
 
