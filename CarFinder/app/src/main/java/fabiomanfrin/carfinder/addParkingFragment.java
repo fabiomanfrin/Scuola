@@ -77,8 +77,6 @@ public class addParkingFragment extends Fragment {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText().toString());
-
                 if(car_parkings!=null) {
                     if(!titleAlreadyExists(title.getText().toString())) {
                         Log.d(TAG, "onClick: parking added");
@@ -98,12 +96,6 @@ public class addParkingFragment extends Fragment {
                                 ((Home) getActivity()).replacefragment(new HomeFragment());
                             }
                         });
-                        // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Description").setValue(description.getText()+"");
-                        // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lat").setValue(lat);
-                        // mDatabase.child("Users").child(mAuth.getCurrentUser().getUid()).child("Parkings").child(title.getText().toString()).child("Coordinates").child("Lng").setValue(lng);
-
-                        //((Home)getActivity()).replacefragment(new HomeFragment());
-                        //Toast.makeText(getActivity(), "parcheggio aggiunto", Toast.LENGTH_SHORT).show();
                     }
                     else{
                         title.setTextColor(Color.RED);
@@ -117,7 +109,6 @@ public class addParkingFragment extends Fragment {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getActivity(), "cancel", Toast.LENGTH_SHORT).show();
                 ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });

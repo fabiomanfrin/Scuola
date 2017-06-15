@@ -19,7 +19,7 @@
             android:layout_marginRight="0dp"
             android:background="@color/colorPrimary"
             android:backgroundTint="@color/colorPrimary"
-            android:text="Save"
+            android:text="@string/save"
             android:textColor="@android:color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/cancel_button"
@@ -34,7 +34,7 @@
             android:layout_marginLeft="0dp"
             android:background="@color/colorPrimaryDark"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:text="Cancel"
+            android:text="@android:string/cancel"
             android:textColor="@android:color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />

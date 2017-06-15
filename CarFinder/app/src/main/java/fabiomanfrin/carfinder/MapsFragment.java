@@ -120,11 +120,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         mMap = googleMap;
 
-        /*if (location!=null){
-            LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
-            mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-        }*/
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -132,13 +127,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         //move the camera to the last known location
         if (location != null) {
-            // Log.e("TAG", "GPS is on");
             final double currentLatitude = location.getLatitude();
             final double currentLongitude = location.getLongitude();
-            LatLng loc1 = new LatLng(currentLatitude, currentLongitude);
-            //mMap.addMarker(new MarkerOptions().position(loc1).title("Your Current Location"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude, currentLongitude), 15));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
         }
 
         if (car_parkings.size() != 0) {
@@ -182,7 +174,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        //setMarkerListener();
         setInfoWindowListener();
 
 
@@ -201,19 +192,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-
-    private void setMarkerListener() {
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                LatLng position=marker.getPosition();
-                selectedLat=position.latitude;
-                selectedLng=position.longitude;
-                updatePath();
-                return true;
-            }
-        });
-    }
 
     private void loadParkings() {
 
@@ -250,13 +228,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             Lat = Double.parseDouble(part1);
             Lng = Double.parseDouble(part2);
             LatLng myLatLng = new LatLng(Lat, Lng);
-            // Toast.makeText(getActivity(),myLatLng.toString(), Toast.LENGTH_SHORT).show();
+
             mMap.addMarker(new MarkerOptions()
                     .position(myLatLng)
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_local_parking_black_24dp))
             );
-            //Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
         }
     }
 
@@ -265,16 +242,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
             String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
-            mMap.clear();
-
-              /*  CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map
-                        .zoom(18)                   // Sets the zoom
-                        .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                        .build();                   // Creates a CameraPosition from the builder
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
-
-            //isPath=true;
             DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap,this);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
@@ -306,26 +273,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
                     ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
-                    //locIcon.setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
-                    locIcon.setVisibility(View.VISIBLE);
+                    locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
                     setLocation(location);
                     Log.d(TAG, "onLocationChanged: "+location.getBearing());
-                  /*  if(isPath){
-                        //updatePath();
-                        CameraPosition camPos = CameraPosition
-                                .builder(
-                                        mMap.getCameraPosition() // current Camera
-                                )
-                                .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                                .bearing(location.getBearing())
-                                .zoom(13)
-                                .tilt(30)
-                                .build();
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
-                    }*/
-                    //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
-                    // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
                 }
 
                 @Override

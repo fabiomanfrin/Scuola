@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 
@@ -48,12 +50,13 @@ public class EditFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ModifyFragment m=new ModifyFragment();
-                Bundle b=new Bundle();
-                b.putInt("position",position);
-                m.setArguments(b);
-                ((Home)getActivity()).replacefragment(m);
-
+                if(((Home)getActivity()).getAuth().getCurrentUser()!=null) {
+                    ModifyFragment m = new ModifyFragment();
+                    Bundle b = new Bundle();
+                    b.putInt("position", position);
+                    m.setArguments(b);
+                    ((Home) getActivity()).replacefragment(m);
+                }
             }
         });
 
@@ -65,7 +68,9 @@ public class EditFragment extends Fragment {
         itemListener.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), car_parkings.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                if(((Home)getActivity()).getAuth()!=null) {
+                    Toast.makeText(getActivity(), car_parkings.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -120,97 +125,3 @@ class ListviewAdapter extends ArrayAdapter<Parking> {
     }
 }
 
-/*
- class ListviewAdapter extends BaseAdapter {
-    private static ArrayList<Parking> list;
-
-    private LayoutInflater mInflater;
-
-    public ListviewAdapter(Context Fragment, ArrayList<Parking> results){
-        list = results;
-        mInflater = LayoutInflater.from(Fragment);
-    }
-
-    @Override
-    public int getCount() {
-        // TODO Auto-generated method stub
-        return list.size();
-    }
-
-    @Override
-    public Object getItem(int arg0) {
-        // TODO Auto-generated method stub
-        return list.get(arg0);
-    }
-
-    @Override
-    public long getItemId(int arg0) {
-        // TODO Auto-generated method stub
-        return arg0;
-    }
-
-
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
-        ViewHolder holder;
-        if(convertView == null){
-            convertView = mInflater.inflate(R.layout.parkinglist_item, null);
-            holder = new ViewHolder();
-            holder.txtTitle = (TextView) convertView.findViewById(R.id.titleItem_text);
-            holder.txtDescription = (TextView) convertView.findViewById(R.id.descriptionItem_text);
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        holder.txtTitle.setText(list.get(position).getTitle());
-        holder.txtDescription.setText(list.get(position).getDescription());
-
-        return convertView;
-    }
-
-    static class ViewHolder{
-        TextView txtTitle, txtDescription;
-    }
-}*/
-
-
-
-
-/*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit, container, false);
-
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ListView l= (ListView) getActivity().findViewById(R.id.listView);
-
-        // ArrayAdapter<Parking> adapter=new ArrayAdapter<Parking>(getActivity(),android.R.layout.simple_list_item_1,car_parkings);
-        // l.setAdapter(adapter);
-
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        car_parkings=((Home)getActivity()).getListParkings();
-        ArrayList<String> support=new ArrayList<>();
-        for(Parking p: car_parkings){
-            Log.d(TAG, "onViewCreated: "+p.getTitle());
-            support.add(p.getTitle());
-        }
-        ListView l= (ListView) getActivity().findViewById(R.id.listView);
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(getActivity(),R.layout.item_list,support);
-        l.setAdapter(adapter);
-
-    }
-
-}*/

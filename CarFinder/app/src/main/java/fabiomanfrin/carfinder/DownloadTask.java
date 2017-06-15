@@ -40,9 +40,7 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
     private ProgressDialogFragment dialog;
     private String Distance;
     private String Duration;
-    /*public DownloadTask(Fragment f){
-        this.f=f;
-    }*/
+
     public DownloadTask(Home home,GoogleMap map){
         mMap=map;
         h=home;

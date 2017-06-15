@@ -15,15 +15,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Polyline;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -57,10 +60,16 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     private TextView username_text;
     private TextView email_text;
-    private TextView login_text;
-    private ImageView iView;
+    private Button signIn_button;
+    private ImageView google_image;
+    private ImageView image;
+    private CardView card;
+
     private ArrayList<Parking> car_parkings;
     private ArrayList<ParkingsPlace> listParkings;
+
+    //variables Maps
+    private Polyline polyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +83,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         car_parkings=new ArrayList<>();
         listParkings=new ArrayList<>();
+        polyline=null;
 
         //get authentication data
         mAuth=FirebaseAuth.getInstance();
@@ -99,24 +109,30 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
         // get view from header bar
         View header=navigationView.getHeaderView(0);
         username_text = (TextView)header.findViewById(R.id.username_text);
         email_text = (TextView)header.findViewById(R.id.email_text);
-        login_text=(TextView)header.findViewById(R.id.login_text);
-        iView=(ImageView)header.findViewById(R.id.imageView);
+        signIn_button= (Button) header.findViewById(R.id.signIn_button);
+        google_image= (ImageView) header.findViewById(R.id.google_image);
+        card= (CardView) header.findViewById(R.id.card);
+
 
 
         if(currentUser!=null) {
             //download image from google
-            Picasso.with(this).load(imageUri).into(iView);
+            image = new ImageView(this);
+            card.addView(image);
+            Picasso.with(this).load(imageUri).into(image);
             username_text.setText(name);
             email_text.setText(email);
         }
 
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
-            login_text.setText("Do you want to sign in? do it NOW");
-            login_text.setOnClickListener(new View.OnClickListener() {
+            signIn_button.setVisibility(View.VISIBLE);
+            google_image.setVisibility(View.VISIBLE);
+            signIn_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(Home.this,SignInActivity.class));
@@ -124,10 +140,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             });
         }
 
-
-        
-
-        ////////////////////////////////
         if(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
             Log.d(TAG, "premission granted");
             fm=getFragmentManager();
@@ -138,19 +150,22 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             getPermission();
 
         }
-        ////////////////////////////////
-
-
 
         mAuthListener=new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(FirebaseAuth.getInstance().getCurrentUser()==null){
-                    iView.setImageAlpha(0);
+                    //iView.setImageAlpha(0);
+                    card.setVisibility(View.GONE);
                     username_text.setText("");
                     email_text.setText("");
-                    login_text.setText("Do you want to sign in? do it NOW");
-                    login_text.setOnClickListener(new View.OnClickListener() {
+                    signIn_button.setVisibility(View.VISIBLE);
+                    google_image.setVisibility(View.VISIBLE);
+
+                    car_parkings.clear();
+                    listParkings.clear();
+
+                    signIn_button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             startActivity(new Intent(Home.this,SignInActivity.class));
@@ -161,10 +176,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         };
 
 
-
-
-        //Query parkings=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
-        //////////////////////
         Query cars=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
         cars.addChildEventListener(new ChildEventListener() {
             @Override
@@ -242,63 +253,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
             }
         });
-        //////////////////////
-      /*  parkings.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final DataSnapshot mySnap=dataSnapshot;
-                if(dataSnapshot.getValue()==null){
-                    Log.d(TAG, "onDataChange: torna null0");
-                }else {
-                    Log.d(TAG, "onDataChange: sto per fare getParkings");
-                    getParkings((Map<String, Object>) dataSnapshot.getValue());
-
-                    Log.d(TAG, "onDataChange: ok ha superato getpark");
-
-                    for (int i=0;i<car_parkings.size();i++){
-                        Log.d(TAG, "HOME: "+car_parkings.get(i).getTitle());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
-
-    }
-
-    private void getParkings(Map<String,Object> parkings) {
-
-        for (Map.Entry<String, Object> entry : parkings.entrySet()) {
-
-            Map singleParking = (Map) entry.getValue();
-            Object description = singleParking.get("Description");
-            Map coordinates = (Map) singleParking.get("Coordinates");
-            String title = entry.getKey();
-
-            if (coordinates == null || description == null) {
-                Log.d(TAG, "getParkings: coordinates or description null");
-            } else if (coordinates.get("Lat") != null && coordinates.get("Lng") != null) {
-                Log.d(TAG, "description: " + description);
-                /*if(car_parkings.size()>0) {
-                    for (Parking p : car_parkings) {
-                        if (!p.getTitle().equals(title)) {
-                            car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
-                        }
-                    }
-                }else
-                {
-                    car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
-                }*/
-                car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
-
-            }
-
-
-        }
     }
 
     public ArrayList<Parking> getListParkings(){
@@ -328,8 +282,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         return urlString.toString();
     }
 
-
-    /////////////////////////////////////
     private static final int PERMISSIONS_REQUEST = 1;
 
     public void getPermission() {
@@ -364,11 +316,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-
-    ////////////////////////////////////
-
-
-
 
     @Override
     public void onBackPressed() {
@@ -475,4 +422,11 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     }
 
+    public Polyline getPreviousPoly() {
+        return polyline;
+    }
+
+    public void setPolyline(Polyline polyline) {
+        this.polyline = polyline;
+    }
 }

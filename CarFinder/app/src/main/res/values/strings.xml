@@ -24,4 +24,11 @@
         \tMaps: Google Maps &amp; Directions from Google api\n
         \n
         \tApp developed for Android 6.0+</string>
+
+    <string name="sign_in">Sign in</string>
+    <string name="add">Add</string>
+    <string name="path">Path</string>
+    <string name="save">Save</string>
+    <string name="remove">Remove</string>
+
 </resources>

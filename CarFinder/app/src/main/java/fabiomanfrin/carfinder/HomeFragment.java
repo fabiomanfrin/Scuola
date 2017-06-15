@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,6 +16,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -76,6 +78,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     //firebase variables
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private String userId;
     private Double selectedLat;
     private Double selectedLng;
@@ -84,6 +87,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private ArrayList<String> spinnerItem;
     private ArrayAdapter<String> arrayAdapter;
     private TextView descriptionText;
+
+
 
     //view
     private boolean isSpinnerTouched = false;
@@ -123,18 +128,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         arrayAdapter= new ArrayAdapter<String>(getContext(),R.layout.spinner_item, spinnerItem);
         spinner.setAdapter(arrayAdapter);
         beginAuth();
-        //locationText = (TextView) getActivity().findViewById(R.id.locationText);
         startLocationUpdates();
-        //getLocation();
         initMap();
-
-
-        //Button b = (Button) getActivity().findViewById(R.id.refresh_button);
-
-
-
-
-
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         }
@@ -144,7 +139,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
            public void onClick(View v) {
                Bundle b = new Bundle();
                if (location == null) {
-                   //Toast.makeText(getContext(), "Unable to add a new car parking cause current location missing", Toast.LENGTH_SHORT).show();
                    Snackbar.make(v, "Unable to add a new car parking cause current location missing", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
                } else {
@@ -169,10 +163,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-
-
-
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -189,18 +179,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             selectedLat = p.getLat();
                             selectedLng = p.getLng();
                             LatLng selectedLatLng = new LatLng(selectedLat, selectedLng);
-                           // mMap.moveCamera(CameraUpdateFactory.newLatLng(selected));
-                           // mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-
                             CameraPosition cameraPosition = new CameraPosition.Builder()
                                     .target(selectedLatLng)
                                     .zoom(13)                   // Sets the zoom
                                     .build();                   // Creates a CameraPosition from the builder
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-
-
-
 
                             String description = p.getDescription();
                             String subDes = description.length() < 50 ? description : description.substring(0, 49) + "...";
@@ -211,9 +194,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     }
 
 
-
-
-
             }
 
             @Override
@@ -221,16 +201,41 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
+
+
+
+        mAuthListener=new FirebaseAuth.AuthStateListener(){
+
+
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(FirebaseAuth.getInstance().getCurrentUser()==null) {
+                    spinnerItem.clear();
+                    spinnerItem.add("log in to get this function");
+                    arrayAdapter.notifyDataSetChanged();
+                    descriptionText.setText("");
+                    if(mMap!=null){
+                        mMap.clear();
+                    }
+                }
+            }
+        };
+
+
+
+
     }
 
-
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
 
     private void beginAuth() {
 
         //getting current account data
         mAuth=((Home)getActivity()).getAuth();
-        //mAuth.getCurrentUser();
         if(mAuth.getCurrentUser()!= null) { 
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
@@ -280,159 +285,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             });
 
 
-        /*    mDatabase = ((Home) getActivity()).getDB().child("Users").child(userId).child("Parkings");
-            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    final DataSnapshot mySnap=dataSnapshot;
-                    if(dataSnapshot.getValue()==null) {
-                        spinnerItem.add("No car parkings available");
-                        arrayAdapter.notifyDataSetChanged();
-                        Log.d(TAG, " torna null0");
-                    }
-                    else{
-                        Log.d(TAG, " sto per fare getParkings");
-                        for (Parking p : car_parkings) {
-                            spinnerItem.add(p.getTitle());
-                        }
 
-                        if (mMap != null) {
-                            loadParkings();
-
-                        }
-
-                        arrayAdapter.notifyDataSetChanged();
-
-                    }
-
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            mDatabase = ((Home) getActivity()).getDB().child("Users").child("ParkingsPlace");
-            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    final DataSnapshot mySnap=dataSnapshot;
-                    if(dataSnapshot.getValue()==null) {
-                        Log.d(TAG, " torna null0");
-                    }
-                    else{
-                        listParkings=((Home)getActivity()).getListParkingsPlace();
-                        if (mMap != null) {
-                            loadParkingsPlace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });*/
-
-
-
-
-            /////////////////////////////////
-
-
-          /*  mDatabase.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    //spinnerItem=new ArrayList<>();
-                    //car_parkings=((Home)getActivity()).getListParkings();
-                    final DataSnapshot mySnap=dataSnapshot;
-                    if(dataSnapshot.getValue()==null) {
-                        spinnerItem.add("No car parkings available");
-                        arrayAdapter.notifyDataSetChanged();
-                        Log.d(TAG, " torna null0");
-                    }
-                    else{
-                        Log.d(TAG, " sto per fare getParkings");
-                        for (Parking p : car_parkings) {
-                            spinnerItem.add(p.getTitle());
-                        }
-
-                        if (mMap != null) {
-                            loadParkings();
-                        }
-
-                        arrayAdapter.notifyDataSetChanged();
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });*/
-
-
-          //////////////////////////////////////////////////////////////////////////////////
-
-           /* Query parkings=mDatabase.child("Users").child(userId).child("Parkings");
-            parkings.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    final DataSnapshot mySnap=dataSnapshot;
-                    if(dataSnapshot.getValue()==null){
-                        spinnerItem.add("No car parkings available");
-                        arrayAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onDataChange: torna null0");
-                    }else {
-                        Log.d(TAG, "onDataChange: sto per fare getParkings");
-                        //getParkings((Map<String, Object>) dataSnapshot.getValue());
-                        car_parkings=((Home)getActivity()).getListParkings();
-                        if(car_parkings!=null) {
-                            for (Parking p : car_parkings) {
-                                spinnerItem.add(p.getTitle());
-                            }
-
-                            if (mMap != null) {
-                                loadParkings();
-                            }
-                        }else
-                        {
-                            Log.d(TAG, "onDataChange: car_p è nullo");
-                        }
-                        arrayAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onDataChange: ok ha superato getpark");
-                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                String selectedP=spinner.getSelectedItem().toString();
-                                selectedLat=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lat").getValue().toString());
-                                selectedLng=Double.parseDouble(mySnap.child(selectedP).child("Coordinates").child("Lng").getValue().toString());
-                                String description=mySnap.child(selectedP).child("Description").getValue().toString();
-                                String subDes=description.length()<20?description:description.substring(0,19)+"...";
-                                descriptionText.setText(subDes);
-                            }
-
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
-
-                            }
-                        });
-
-                        Log.d(TAG, "onDataChange: " + spinnerItem.toString());
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });*/
         }
         else{
             spinnerItem.add("log in to get this function");
@@ -444,7 +297,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private void loadParkings() {
 
-        //mMap.clear();
         Double Lat;
         Double Lng;
         String title;
@@ -476,13 +328,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Lat = Double.parseDouble(part1);
             Lng = Double.parseDouble(part2);
             LatLng myLatLng = new LatLng(Lat, Lng);
-           // Toast.makeText(getActivity(),myLatLng.toString(), Toast.LENGTH_SHORT).show();
             mMap.addMarker(new MarkerOptions()
                     .position(myLatLng)
                     .title(title)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_local_parking_black_24dp))
                     );
-            //Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
         }
     }
 
@@ -535,7 +385,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 final double currentLatitude = location.getLatitude();
                 final double currentLongitude = location.getLongitude();
                 LatLng loc1 = new LatLng(currentLatitude, currentLongitude);
-                //mMap.addMarker(new MarkerOptions().position(loc1).title("Your Current Location"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude, currentLongitude), 15));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
             }
@@ -587,77 +436,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-
-    /*public void getLocation(){
-        myLocListener = new myLocationListener(HomeFragment.this);
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-        //check if the gps is enabled
-
-        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
-            builder.setMessage("GPS down, do you want to enable it?")
-                    .setCancelable(false)
-                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                            Criteria criteria = new Criteria();
-                            bestProvider = locationManager.getBestProvider(criteria, false);
-
-                            try {
-                                location = locationManager.getLastKnownLocation(bestProvider);
-                                locationManager.requestLocationUpdates(bestProvider, minTime, minDistance, myLocListener);
-
-
-                            }
-                            catch (NullPointerException e){
-                                e.printStackTrace();
-
-                            }
-                            catch(SecurityException sEx){
-                                sEx.printStackTrace();
-
-                            }
-                        }
-                    })
-                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            getActivity().finish();
-                        }
-                    });
-            AlertDialog alert=builder.create();
-            alert.show();
-        }else{
-
-            Criteria criteria = new Criteria();
-            bestProvider = locationManager.getBestProvider(criteria, false);
-
-            try {
-                location = locationManager.getLastKnownLocation(bestProvider);
-                locationManager.requestLocationUpdates(bestProvider, minTime, minDistance, myLocListener);
-
-
-            }
-            catch (NullPointerException e){
-                e.printStackTrace();
-
-            }
-            catch(SecurityException sEx){
-                sEx.printStackTrace();
-
-            }
-
-        }
-
-
-
-
-    }*/
-
-
     public void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -684,12 +462,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
-                    //locIcon.setColorFilter(R.color.green);
-                    locIcon.setVisibility(View.VISIBLE);
+                    locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
                     setLocation(location);
-                    //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
-                    // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+
                 }
 
                 @Override
@@ -720,7 +495,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
-            mMap.clear();
             DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap,this);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
