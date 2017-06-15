@@ -60,6 +60,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private TextView login_text;
     private ImageView iView;
     private ArrayList<Parking> car_parkings;
+    private ArrayList<ParkingsPlace> listParkings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         setSupportActionBar(toolbar);
 
         car_parkings=new ArrayList<>();
+        listParkings=new ArrayList<>();
 
         //get authentication data
         mAuth=FirebaseAuth.getInstance();
@@ -163,8 +165,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         //Query parkings=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
         //////////////////////
-        Query parkings=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
-        parkings.addChildEventListener(new ChildEventListener() {
+        Query cars=mDatabase.child("Users").child(currentUser.getUid()).child("Parkings");
+        cars.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d(TAG, "onChildAdded: "+dataSnapshot.getKey());
@@ -176,6 +178,45 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                     Map coordinates = (Map) singleParking.get("Coordinates");
                     car_parkings.add(new Parking(title, Double.parseDouble(coordinates.get("Lat").toString()), Double.parseDouble(coordinates.get("Lng").toString()), description.toString()));
 
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, "onChildRemoved: "+dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved: "+dataSnapshot.getKey());
+
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        final Query parkings=mDatabase.child("Users").child("ParkingsPlace");
+        parkings.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+               // Log.d(TAG, "onChildAdded: "+dataSnapshot.getKey());
+
+                if(dataSnapshot.getValue()!=null ) {
+                    ParkingsPlace p=dataSnapshot.getValue(ParkingsPlace.class);
+                    listParkings.add(p);
+                    for(ParkingsPlace pp:listParkings){
+                        Log.d(TAG, "onChildAddedParkingsPlace: "+pp.getTitle()+","+pp.getCoordinates()+","+pp.getDescription());
+                    }
                 }
             }
 
@@ -262,6 +303,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
     public ArrayList<Parking> getListParkings(){
         return car_parkings;
+    }
+    public ArrayList<ParkingsPlace> getListParkingsPlace(){
+        return listParkings;
     }
 
     public String makeURL (double sourcelat, double sourcelog, double destlat, double destlog ){

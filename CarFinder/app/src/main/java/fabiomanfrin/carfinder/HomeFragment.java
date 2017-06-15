@@ -80,6 +80,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private ArrayList<Parking> car_parkings;
+    private ArrayList<ParkingsPlace> listParkings;
     private ArrayList<String> spinnerItem;
     private ArrayAdapter<String> arrayAdapter;
     private TextView descriptionText;
@@ -234,8 +235,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             userId = mAuth.getCurrentUser().getUid();
             //getting databse from activity
             mDatabase = ((Home) getActivity()).getDB().child("Users").child(userId).child("Parkings");
-
-
             mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -253,11 +252,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                         if (mMap != null) {
                             loadParkings();
+
                         }
 
                         arrayAdapter.notifyDataSetChanged();
 
                     }
+
+
 
                 }
 
@@ -266,6 +268,29 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                 }
             });
+
+            mDatabase = ((Home) getActivity()).getDB().child("Users").child("ParkingsPlace");
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    final DataSnapshot mySnap=dataSnapshot;
+                    if(dataSnapshot.getValue()==null) {
+                        Log.d(TAG, " torna null0");
+                    }
+                    else{
+                        listParkings=((Home)getActivity()).getListParkingsPlace();
+                        if (mMap != null) {
+                            loadParkingsPlace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+
 
           /*  mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -369,7 +394,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private void loadParkings() {
 
-        mMap.clear();
+        //mMap.clear();
         Double Lat;
         Double Lng;
         String title;
@@ -384,6 +409,30 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
             Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
+        }
+    }
+    private void loadParkingsPlace() {
+        Log.d(TAG, "loadParkingsPlace: dentro place");
+        Double Lat;
+        Double Lng;
+        String title;
+        for (int i = 0; i < listParkings.size(); i++) {
+            Log.d(TAG, "loadParkingsPlace: dentro for place");
+            title = listParkings.get(i).getTitle();
+            String coord = listParkings.get(i).getCoordinates();
+            String[] parts = coord.split(",");
+            String part1 = parts[0];
+            String part2 = parts[1];
+            Lat = Double.parseDouble(part1);
+            Lng = Double.parseDouble(part2);
+            LatLng myLatLng = new LatLng(Lat, Lng);
+            Toast.makeText(getActivity(),myLatLng.toString(), Toast.LENGTH_SHORT).show();
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLatLng)
+                    .title(title)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_local_parking_black_24dp))
+                    );
+            //Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
         }
     }
 
@@ -409,6 +458,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 /***at this time google play services are not initialize so get map and add what ever you want to it in onResume() or onStart() **/
 
         car_parkings=((Home)getActivity()).getListParkings();
+        listParkings=((Home)getActivity()).getListParkingsPlace();
+        Log.d(TAG, "onMapReady: listParking con oggetti"+car_parkings.size());
 
 
     }
@@ -443,6 +494,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if(car_parkings.size()!=0) {
             loadParkings();
         }
+        if(listParkings.size()!=0) {
+            Log.d(TAG, "onMapReady: listParking con oggetti");
+            loadParkingsPlace();
+        }
 
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -457,10 +512,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 TextView title= (TextView) v.findViewById(R.id.title_window);
                 TextView desc= (TextView) v.findViewById(R.id.description_window);
                 title.setText(marker.getTitle());
+
                 String d="";
                 for(int i=0;i<car_parkings.size();i++){
                     if(car_parkings.get(i).getTitle().equals(marker.getTitle())){
                         d=car_parkings.get(i).getDescription();
+                        break;
+                    }
+                }
+                for(int i=0;i<listParkings.size();i++){
+                    if(listParkings.get(i).getTitle().equals(marker.getTitle())){
+                        d=listParkings.get(i).getDescription();
                         break;
                     }
                 }

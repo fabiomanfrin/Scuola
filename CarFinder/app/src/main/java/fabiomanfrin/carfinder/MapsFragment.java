@@ -59,7 +59,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private boolean isPath = false;
-    private long minTime =1 * 10 * 1000; //10 seconds
+    private long minTime = 1 * 10 * 1000; //10 seconds
     private float minDistance = 25;   //25 meters
 
 
@@ -139,7 +139,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
         }
 
-        if(car_parkings.size()!=0) {
+        if (car_parkings.size() != 0) {
             loadParkings();
         }
 
@@ -152,14 +152,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
             @Override
             public View getInfoContents(Marker marker) {
-                View v=getActivity().getLayoutInflater().inflate(R.layout.infowindowfullmap,null);
-                TextView title= (TextView) v.findViewById(R.id.title_window);
-                TextView desc= (TextView) v.findViewById(R.id.description_window);
+                View v = getActivity().getLayoutInflater().inflate(R.layout.infowindowfullmap, null);
+                TextView title = (TextView) v.findViewById(R.id.title_window);
+                TextView desc = (TextView) v.findViewById(R.id.description_window);
                 title.setText(marker.getTitle());
-                String d="";
-                for(int i=0;i<car_parkings.size();i++){
-                    if(car_parkings.get(i).getTitle().equals(marker.getTitle())){
-                        d=car_parkings.get(i).getDescription();
+                String d = "";
+                for (int i = 0; i < car_parkings.size(); i++) {
+                    if (car_parkings.get(i).getTitle().equals(marker.getTitle())) {
+                        d = car_parkings.get(i).getDescription();
                         break;
                     }
                 }
@@ -177,13 +177,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    public void setInfoWindowListener(){
+    public void setInfoWindowListener() {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                LatLng position=marker.getPosition();
-                selectedLat=position.latitude;
-                selectedLng=position.longitude;
+                LatLng position = marker.getPosition();
+                selectedLat = position.latitude;
+                selectedLng = position.longitude;
+                isPath = true;
                 updatePath();
             }
         });
@@ -229,15 +230,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             String url = ((Home)getActivity()).makeURL(location.getLatitude(), location.getLongitude(), selectedLat, selectedLng);   //google json from current location to chiesa di campalto
             Log.d(TAG, url);
             mMap.clear();
-           /* if(!isPath) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
+
+              /*  CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map
                         .zoom(18)                   // Sets the zoom
                         .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                         .build();                   // Creates a CameraPosition from the builder
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }*/
-            isPath=true;
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
+
+            //isPath=true;
             DownloadTask downloadTask = new DownloadTask((Home)getActivity(),mMap,this);
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
@@ -272,9 +273,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     //locIcon.setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
                     locIcon.setVisibility(View.VISIBLE);
                     setLocation(location);
-                    if(isPath){
-                        updatePath();
-                    }
+                    Log.d(TAG, "onLocationChanged: "+location.getBearing());
+                  /*  if(isPath){
+                        //updatePath();
+                        CameraPosition camPos = CameraPosition
+                                .builder(
+                                        mMap.getCameraPosition() // current Camera
+                                )
+                                .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                                .bearing(location.getBearing())
+                                .zoom(13)
+                                .tilt(30)
+                                .build();
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
+                    }*/
                     //Toast.makeText(MapsActivity.this, currentLocation.toString(), Toast.LENGTH_SHORT).show();
                     // mMap.addMarker(new MarkerOptions().position(currentLocation).title("You, "+currentLocation));
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));

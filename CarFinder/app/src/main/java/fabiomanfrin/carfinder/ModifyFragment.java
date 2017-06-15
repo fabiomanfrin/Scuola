@@ -139,7 +139,7 @@ public class ModifyFragment extends Fragment {
                         public Transaction.Result doTransaction(MutableData mutableData) {
                             if(!p.getTitle().equals(title.getText().toString())) {
                                 mutableData.child(p.getTitle()).setValue(null);
-                                //((Home) getActivity()).removeParking(p.getTitle());
+                                ((Home) getActivity()).removeParking(p.getTitle());
                             }
                             ((Home)getActivity()).updateParking(title.getText().toString(),desc.getText().toString(),modifiedCoord.latitude,modifiedCoord.longitude);
                             mutableData.child(title.getText().toString()).child("Description").setValue(desc.getText().toString());

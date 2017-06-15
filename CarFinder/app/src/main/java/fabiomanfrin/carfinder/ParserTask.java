@@ -9,9 +9,11 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -29,21 +31,23 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
 
     private Home h;
     private ArrayList<Parking> car_parkings;
-    private String TAG="myTAG";
+    private ArrayList<ParkingsPlace> listParkings;
+    private String TAG = "myTAG";
     private ProgressDialogFragment dialog;
     private GoogleMap mMap;
 
-    public ParserTask(Home home,GoogleMap map){
-        mMap=map;
-        h=home;
-        car_parkings=home.getListParkings();
+    public ParserTask(Home home, GoogleMap map) {
+        mMap = map;
+        h = home;
+        car_parkings = home.getListParkings();
+        listParkings = home.getListParkingsPlace();
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        dialog=new ProgressDialogFragment();
-        dialog.show(h.getFragmentManager(),"TAG");
+        dialog = new ProgressDialogFragment();
+        dialog.show(h.getFragmentManager(), "TAG");
 
     }
 
@@ -113,38 +117,74 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         }
 
 
-
         // Drawing polyline in the Google Map for the i-th route
         //locationText.append("Distance:" + distance + ", Duration:" + duration);
         //Toast.makeText(hf.getActivity(), "Distance:" + distance + ", Duration:" + duration, Toast.LENGTH_SHORT).show();
 
         mMap.addPolyline(lineOptions);
         loadParkings();
+        loadParkingsPlace();
+
+        CameraPosition camPos = CameraPosition
+                .builder(
+                        mMap.getCameraPosition() // current Camera
+                )
+                .target(points.get(points.size() / 3))
+                .zoom(13)
+                .tilt(30)
+                .build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
+
         dialog.dismiss();
     }
 
-    private void loadParkings(){
+    private void loadParkings() {
 
         Double Lat;
         Double Lng;
         String title;
-        for (int i=0;i<car_parkings.size();i++){
+        for (int i = 0; i < car_parkings.size(); i++) {
 
-            title=car_parkings.get(i).getTitle();
-            Lat=car_parkings.get(i).getLat();
-            Lng=car_parkings.get(i).getLng();
+            title = car_parkings.get(i).getTitle();
+            Lat = car_parkings.get(i).getLat();
+            Lng = car_parkings.get(i).getLng();
 
             //Log.d(TAG, "onPostExecute: "+Lat+" "+Lng);
-            LatLng myLatLng=new LatLng(Lat,Lng);
+            LatLng myLatLng = new LatLng(Lat, Lng);
             mMap.addMarker(new MarkerOptions()
                     .position(myLatLng)
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car_black_24dp)));
-            Log.d(TAG, "mappa parser: "+title+myLatLng.toString());
+            Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
+
         }
+
 
     }
 
 
 
+    private void loadParkingsPlace() {
+        Log.d(TAG, "loadParkingsPlace: dentro place");
+        Double Lat;
+        Double Lng;
+        String title;
+        for (int i = 0; i < listParkings.size(); i++) {
+            Log.d(TAG, "loadParkingsPlace: dentro for place");
+            title = listParkings.get(i).getTitle();
+            String coord = listParkings.get(i).getCoordinates();
+            String[] parts = coord.split(",");
+            String part1 = parts[0];
+            String part2 = parts[1];
+            Lat = Double.parseDouble(part1);
+            Lng = Double.parseDouble(part2);
+            LatLng myLatLng = new LatLng(Lat, Lng);
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLatLng)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_local_parking_black_24dp))
+            );
+            //Log.d(TAG, "mappa parser: " + title + myLatLng.toString());
+        }
+    }
 }
