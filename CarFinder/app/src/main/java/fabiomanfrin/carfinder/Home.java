@@ -171,6 +171,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
                             startActivity(new Intent(Home.this,SignInActivity.class));
                         }
                     });
+
+                    replacefragment(new HomeFragment());
                 }
             }
         };

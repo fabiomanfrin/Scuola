@@ -30,5 +30,14 @@
     <string name="path">Path</string>
     <string name="save">Save</string>
     <string name="remove">Remove</string>
+    <string name="mycancel">cancel</string>
+
+    <!--menu strings-->
+    <string name="home">Home</string>
+    <string name="editpar">Edit parking</string>
+    <string name="mymap">Map</string>
+    <string name="notes">Notes</string>
+    <string name="info">Info</string>
+    <string name="logout">Log Out</string>
 
 </resources>

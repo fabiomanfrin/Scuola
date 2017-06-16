@@ -34,7 +34,7 @@
             android:layout_marginLeft="0dp"
             android:background="@color/colorPrimaryDark"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:text="@android:string/cancel"
+            android:text="@string/mycancel"
             android:textColor="@android:color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />
