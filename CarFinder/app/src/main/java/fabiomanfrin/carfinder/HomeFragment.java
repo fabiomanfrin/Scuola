@@ -241,11 +241,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             //getting databse from activity
 
 
-            mDatabase = ((Home) getActivity()).getDB().child("Users");
+            mDatabase = ((Home) getActivity()).getDB();
             mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    final DataSnapshot parkingsSnap=dataSnapshot.child(userId).child("Parkings");
+                    final DataSnapshot parkingsSnap=dataSnapshot.child("Users").child(userId).child("Parkings");
                     if(parkingsSnap.getValue()==null) {
                         spinnerItem.add("No car parkings available");
                         arrayAdapter.notifyDataSetChanged();
@@ -266,7 +266,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     }
 
-                    final DataSnapshot parkingsPlaceSnap=dataSnapshot.child("ParkingsPlace");
+                    final DataSnapshot parkingsPlaceSnap=dataSnapshot.child("Parkings");
                     if(parkingsPlaceSnap.getValue()!=null) {
                         listParkings=((Home)getActivity()).getListParkingsPlace();
                         if (mMap != null) {

@@ -218,7 +218,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         });
 
 
-        final Query parkings=mDatabase.child("Users").child("ParkingsPlace");
+        final Query parkings=mDatabase.child("Parkings");
         parkings.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
