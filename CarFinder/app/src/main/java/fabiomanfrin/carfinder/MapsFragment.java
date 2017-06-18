@@ -29,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -46,6 +47,7 @@ import static android.content.Context.LOCATION_SERVICE;
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "myMAP";
+    private static final float MIN_ACCURACY = 15;
     private MapFragment mapFragment;
     private GoogleMap mMap;
     private ArrayList<Parking> car_parkings;
@@ -60,8 +62,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private Double selectedLat;
     private Double selectedLng;
     private boolean isPath = false;
-    private long minTime = 1 * 10 * 1000; //10 seconds
-    private float minDistance = 25;   //25 meters
+    private long minTime = 1 * 0 * 1000; //0 seconds
+    private float minDistance = 0;   //0 meters
 
 
     public MapsFragment() {
@@ -119,6 +121,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+
+        UiSettings ui=mMap.getUiSettings();
+        ui.setCompassEnabled(false);
 
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -271,11 +276,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 @Override
                 public void onLocationChanged(Location location) {
 
-                    LatLng currentLocation=new LatLng(location.getLatitude(),location.getLongitude());
-                    ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
-                    locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
-                    setLocation(location);
-                    Log.d(TAG, "onLocationChanged: "+location.getBearing());
+                    if(location.getAccuracy()<MIN_ACCURACY) {
+                        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        ImageView locIcon = (ImageView) getActivity().findViewById(R.id.location_icon);
+                        locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
+                        setLocation(location);
+                        Log.d(TAG, "onLocationChanged: " + location.getBearing());
+                    }
                 }
 
                 @Override

@@ -38,6 +38,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -60,11 +61,12 @@ import static android.content.Context.LOCATION_SERVICE;
  */
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
+    private static final float MIN_ACCURACY = 15;
     String TAG = "myHFragment";
     private MapFragment mapFragment;
     private GoogleMap mMap;
-    private long minTime =1 * 10 * 1000; //30 seconds
-    private float minDistance = 25;   //25 meters
+    private long minTime =1 * 0 * 1000; //0 seconds
+    private float minDistance = 0;   //0 meters
     private Spinner spinner;
 
     //location variables
@@ -370,6 +372,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+
+        UiSettings ui=mMap.getUiSettings();
+        ui.setCompassEnabled(false);
+
         if (location!=null){
             LatLng you=new LatLng(location.getLatitude(),location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(you));
@@ -460,10 +466,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 @Override
                 public void onLocationChanged(Location location) {
 
-                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    ImageView locIcon= (ImageView) getActivity().findViewById(R.id.location_icon);
-                    locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
-                    setLocation(location);
+                    if(location.getAccuracy()<MIN_ACCURACY) {
+                        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        ImageView locIcon = (ImageView) getActivity().findViewById(R.id.location_icon);
+                        locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
+                        setLocation(location);
+
+                        Log.d(TAG, "onLocationChanged: " + location.getAccuracy());
+                    }
 
                 }
 
