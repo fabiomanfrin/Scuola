@@ -39,5 +39,7 @@
     <string name="notes">Notes</string>
     <string name="info">Info</string>
     <string name="logout">Log Out</string>
+    <string name="notdetected">not detected</string>
+    <string name="detected">detected</string>
 
 </resources>

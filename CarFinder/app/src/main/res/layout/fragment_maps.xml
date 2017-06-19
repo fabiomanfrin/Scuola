@@ -59,7 +59,25 @@
             app:layout_constraintRight_toRightOf="@+id/map_full"
             app:layout_constraintTop_toTopOf="@+id/map_full"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_gps_off_black_24dp" />
+            app:srcCompat="@drawable/ic_place_black_24dp" />
+
+        <TextView
+            android:id="@+id/locationDetection_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/notdetected"
+            android:textColor="@android:color/black"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/infoPathMaps_text"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toRightOf="@+id/location_icon"
+            app:layout_constraintRight_toRightOf="@+id/map_full"
+            app:layout_constraintTop_toTopOf="@+id/map_full"
+            app:layout_constraintVertical_bias="0.0" />
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

@@ -278,8 +278,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                     if(location.getAccuracy()<MIN_ACCURACY) {
                         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        ImageView locIcon = (ImageView) getActivity().findViewById(R.id.location_icon);
-                        locIcon.setImageResource(R.drawable.ic_gps_fixed_black_24dp);
+                        TextView locationDetected= (TextView) getActivity().findViewById(R.id.locationDetection_text);
+                        locationDetected.setText(R.string.detected);
                         setLocation(location);
                         Log.d(TAG, "onLocationChanged: " + location.getBearing());
                     }
