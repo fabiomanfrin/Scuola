@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment con le info dell'app
+ *
  */
 public class InfoFragment extends Fragment {
 

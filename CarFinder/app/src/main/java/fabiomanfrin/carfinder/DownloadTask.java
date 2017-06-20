@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Fabio on 11/05/2017.
+ *
+ * Task asincrono per il download del json di google
+ *
  */
 
 public class DownloadTask extends AsyncTask<String, Void, String> {

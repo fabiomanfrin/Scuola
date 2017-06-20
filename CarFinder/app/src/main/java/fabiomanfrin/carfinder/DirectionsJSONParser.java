@@ -11,12 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Fabio on 11/05/2017.
+ *
+ * Parser del json di google per le direzioni tramite Directions API di Google
+ *
  */
 
 public class DirectionsJSONParser {
 
-    /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
+    // Riceve un JSON object e restituisce una lista di liste con latitudine e longitudine
     public List<List<HashMap<String,String>>> parse(JSONObject jObject){
 
         List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String,String>>>() ;
@@ -63,6 +65,7 @@ public class DirectionsJSONParser {
         return routes;
     }
 
+    //metodo di decodifica delle polyline da json
     private List<LatLng> decodePoly(String encoded) {
 
         List<LatLng> poly = new ArrayList<LatLng>();

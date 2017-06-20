@@ -6,7 +6,9 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 
 /**
- * Created by volcano on 04/05/17.
+ *
+ * dialog per il caricamento del path
+ *
  */
 
 

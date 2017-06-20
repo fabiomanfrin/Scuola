@@ -42,6 +42,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ *
+ * Activity principale
+ *
+ */
+
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 

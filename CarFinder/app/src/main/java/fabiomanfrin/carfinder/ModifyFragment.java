@@ -26,7 +26,9 @@ import java.util.ArrayList;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment richiamato dall'edit per modificare il parcheggio scelto
+ *
  */
 public class ModifyFragment extends Fragment {
 

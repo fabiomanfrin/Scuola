@@ -22,7 +22,9 @@ import java.util.ArrayList;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * fragment per modificare i parcheggi aggiunti
+ *
  */
 public class EditFragment extends Fragment {
 

@@ -1,7 +1,9 @@
 package fabiomanfrin.carfinder;
 
 /**
- * Created by Fabio on 15/06/2017.
+ *
+ * Classe per i parcheggi fisici(strutture)
+ *
  */
 
 public class ParkingsPlace {

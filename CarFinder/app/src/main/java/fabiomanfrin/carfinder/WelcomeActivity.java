@@ -5,6 +5,12 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+/**
+ *
+ * Activity per la schermata di benevenuto iniziale
+ *
+ */
+
 public class WelcomeActivity extends AppCompatActivity {
 
     private static int TIME=2000; //3 seconds

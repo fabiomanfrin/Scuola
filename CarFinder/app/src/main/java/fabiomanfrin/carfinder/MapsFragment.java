@@ -42,7 +42,9 @@ import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment con mappa a tutto schermo
+ *
  */
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 

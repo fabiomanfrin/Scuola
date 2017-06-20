@@ -3,7 +3,9 @@ package fabiomanfrin.carfinder;
 import com.google.firebase.database.DataSnapshot;
 
 /**
- * Created by fabio on 5/18/17.
+ *
+ * Classe Parking
+ *
  */
 
 public class Parking {

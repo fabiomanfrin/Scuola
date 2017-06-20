@@ -30,7 +30,9 @@ import java.util.ArrayList;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment che permette l'aggiunta di un parcheggio al dp
+ *
  */
 public class addParkingFragment extends Fragment {
 
@@ -87,7 +89,6 @@ public class addParkingFragment extends Fragment {
                                 mutableData.child("Description").setValue(description.getText() + "");
                                 mutableData.child("Coordinates").child("Lat").setValue(lat);
                                 mutableData.child("Coordinates").child("Lng").setValue(lng);
-                                //return null;
                                 return Transaction.success(mutableData);
                             }
 
@@ -112,7 +113,6 @@ public class addParkingFragment extends Fragment {
                 ((Home)getActivity()).replacefragment(new HomeFragment());
             }
         });
-
 
 
     }

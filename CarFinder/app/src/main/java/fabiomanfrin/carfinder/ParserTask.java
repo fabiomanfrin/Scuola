@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A class to parse the Google Places in JSON format
+ *
+ * Task asincrono per il parsing del json
+ *
  */
 public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
@@ -114,13 +116,18 @@ public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<Str
         previousPoly.remove();
         polyline=mMap.addPolyline(lineOptions);
         h.setPolyline(polyline);
+
+        int zoom=13;
+
+
         CameraPosition camPos = CameraPosition
                 .builder(
                         mMap.getCameraPosition() // current Camera
                 )
                 .target(points.get(points.size() / 3))
-                .zoom(13)
+                .zoom(zoom)
                 .build();
+        Log.d(TAG, "onPostExecute: "+points.size());
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
 
         dialog.dismiss();

@@ -36,7 +36,9 @@ import java.util.Map;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment che lista le note dell'utente
+ *
  */
 public class NotesFragment extends Fragment {
 

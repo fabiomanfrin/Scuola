@@ -21,6 +21,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+/**
+ *
+ * Activity richiamata da Modify fragment per modificare le coordinate del parcheggio
+ *
+ */
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;

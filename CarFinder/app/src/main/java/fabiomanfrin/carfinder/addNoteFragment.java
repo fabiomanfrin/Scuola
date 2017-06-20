@@ -20,7 +20,9 @@ import com.google.firebase.database.Transaction;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment che permette l'aggiunta di una nuova nota sul db
+ *
  */
 public class addNoteFragment extends Fragment {
 

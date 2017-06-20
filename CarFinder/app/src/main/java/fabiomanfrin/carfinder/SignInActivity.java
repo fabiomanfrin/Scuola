@@ -27,6 +27,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+/**
+ *
+ * Activity per effettuare Log in
+ *
+ */
+
 public class SignInActivity extends AppCompatActivity {
 
     private SignInButton mGoogleBtn;

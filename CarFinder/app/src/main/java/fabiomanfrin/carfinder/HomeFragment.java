@@ -57,7 +57,9 @@ import static android.content.Context.LOCATION_SERVICE;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ *
+ * Fragment Home , il fragment principale che viene caricato all'avvio dell'app
+ *
  */
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
